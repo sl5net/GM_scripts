@@ -17,7 +17,8 @@ and stops - for ever - when you move mouse fast
 
 (function() {
   const i = 'https://sl5.de/wp-content/uploads/2025/01/SL5net_logo_white_shadow_on_blue_w990.png';
-  const t = ' |Deutsch+English |Viewer games |Learn IT at SL5.de |Developer?%E2%86%92join SL5.de %E2%9D%A4%EF%B8%8FBughouse/Tandem %E2%9D%A4%EF%B8%8Fhand-and-brain %E2%9D%A4%EF%B8%8Fseeh at lichess %E2%9D%A4%EF%B8%8Fseeh74 at chess.com | Developer?%E2%86%92join SL5.de | Developer?%E2%86%92join SL5.de | Developer?%E2%86%92join SL5.de';
+
+  const t = ' |Deutsch+English |Viewer games |Learn IT at SL5.de |Developer?→join SL5.de ❤️Bughouse/Tandem ❤️hand-and-brain ❤️seeh at lichess ❤️seeh74 at chess.com | Developer?→join SL5.de | Developer?→join SL5.de | Developer?→join SL5.de';
   const s = 'background-color:#C02942;color:white;text-align:center;padding:5px;font-size:14px;position:fixed;bottom:0;width:100%;z-index:9998;';
 
   let r = false;
