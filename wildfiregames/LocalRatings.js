@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name     GM LocalRatings
-// @description sets your name in search box. but you stell need to bress a buttion later. in this example playername is "seeh"
+// @description sets your name in search box. but you stell need to bress a buttion later. in this example playername is "seeh" . when sombody ask you in a TG about your rating you can easy to check it
 // @version  1
 // @match   https://replay-pallas.wildfiregames.ovh/LocalRatings*
 // @grant none
