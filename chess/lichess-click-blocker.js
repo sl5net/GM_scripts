@@ -16,7 +16,7 @@ function Greasemonkey_main () {
   
 const url = window.location.href;
 
-const positiveRegex= new RegExp(`\.org\/(training|streak|storm|racer|.*[A-Z])`);
+const positiveRegex= new RegExp(`\.org\/(training|streak|.*[A-Z])`);
 const negativeRegex = new RegExp(`\.org\/(?:@|lern|study|coordinate|practice|inbox|team|forum|broadcast|streamer|video|player|patron|paste)[^\/]*$`);
     
 
