@@ -58,7 +58,7 @@ and stops - for ever - when you move mouse fast
       
       const txt = document.createElement('div');
       txt.style.cssText = 'position:fixed;z-index:9999;color:white;text-align:center;font-size:16px;font-weight:bold;pointer-events:none;white-space:pre-wrap;';
-      txt.textContent = "I'll be right back\nGleich wieder da%E2%9D%A4%EF%B8%8F";
+      txt.textContent = "I'll be right back\nGleich wieder da";
   
       document.body.appendChild(img);
       document.body.appendChild(txt);
