@@ -1,0 +1,10 @@
+
+tells
+
+"I'll be right back\nGleich wieder da%E2%9D%A4%EF%B8%8F"
+
+and stops - for ever - when you move mouse fast
+
+```js
+javascript:(function(){const i='https://sl5.de/wp-content/uploads/2025/01/SL5net_logo_white_shadow_on_blue_w990.png',img=document.createElement('img'),txt=document.createElement('div');img.src=i;img.style.cssText='position:fixed;z-index:9999;width:100px;height:auto;pointer-events:none;';txt.style.cssText='position:fixed;z-index:9999;color:white;text-align:center;font-size:16px;font-weight:bold;pointer-events:none;white-space:pre-wrap;';txt.textContent="I'll be right back\nGleich wieder da%E2%9D%A4%EF%B8%8F";document.body.appendChild(img);document.body.appendChild(txt);let x=0,y=0,dx=Math.random()*2-1,dy=Math.random()*2-1,isRunning=true,lastMouseX=null,lastMouseY=null,tolerance=30;function animate(){if(!isRunning)return;x+=dx;y+=dy;if(x+img.offsetWidth>window.innerWidth||x<0)dx=-dx;if(y+img.offsetHeight>window.innerHeight||y<0)dy=-dy;img.style.left=x+'px';img.style.top=y+'px';txt.style.left=x+'px';txt.style.top=y+img.offsetHeight+'px';requestAnimationFrame(animate);}animate();document.addEventListener('mousemove',function(event){if(lastMouseX!==null&&lastMouseY!==null){const deltaX=Math.abs(event.clientX-lastMouseX),deltaY=Math.abs(event.clientY-lastMouseY);if(deltaX>tolerance||deltaY>tolerance){isRunning=false;img.remove();txt.remove();}}lastMouseX=event.clientX;lastMouseY=event.clientY;});})();
+```
