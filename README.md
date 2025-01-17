@@ -1,6 +1,8 @@
 # GM_scripts
 All about my Greasemonkey scripts
 
-please watch also here:
+tested with: Greasemonkey userscript manager in Mozilla Firefox WebBrowser.
+
+you may also want watch here:
 
 https://github.com/sl5net/lichess-bookmarklets/tree/main
