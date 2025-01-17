@@ -1,0 +1,108 @@
+// ==UserScript==
+// @name Greasem chessCom
+// @namespace https://chess.com
+// @version 1.0
+// @description Greasemonkey chessCom
+// @match https://www.chess.com/*
+// @grant none
+// ==/UserScript==
+
+
+
+setTimeout(function() { // Wrap the main script logic in setTimeout
+  (function() {
+    
+    
+function isBoardFlipped() {
+const board = document.querySelector('.board');
+const isFlipped = board ? board.classList.contains('flipped') : false;
+return isFlipped;
+}
+    
+    
+    
+    let colors = document.querySelectorAll(".clock-component");
+    const getPlayerColor = () => {
+      
+      
+      if( isBoardFlipped() )
+        return 'b'; // black
+      
+      let colors = document.querySelectorAll(".clock-component");
+      //Check if colors exist. If not, return null.
+      if (!colors || colors.length < 2 || !colors[1].classList || colors[1].classList.length < 3)
+      {
+          return null;
+      }
+      let playerColor = colors[1].classList[2].replace("clock-", "")[0];
+      
+      if(playerColor != 'w' && playerColor != 'b')
+				playerColor = 'w';
+      
+      return playerColor;
+    };
+
+    const playerColor = getPlayerColor();
+    if (playerColor) {
+      const styleElement = document.createElement('style');
+      const kingImageUrl = 'url(https://static-cdn.jtvnw.net/jtv_user_pictures/67dcc3a8-669c-4670-96d1-0ad3728c3adb-profile_image-70x70.png)';
+      const queenImageUrl = 'url(https://images.chesscomfiles.com/uploads/v1/user/58361334.230ee823.100x100o.17cce90e60c0@3x.jpeg)';
+
+      styleElement.innerHTML = `
+        .highlight {
+          background-color:red!important;opacity:1!important;
+        }
+        .${playerColor}k.piece::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-image: ${kingImageUrl};
+          background-size: cover;
+          background-repeat: no-repeat;
+          background-position: center;
+        }
+        .${playerColor}q.piece::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-image: ${queenImageUrl};
+          background-size: cover;
+          background-repeat: no-repeat;
+          background-position: center;
+        }
+      `;
+
+      document.head.appendChild(styleElement);
+    } else {
+        //If player color isn't found, try again after a short delay
+        setTimeout(arguments.callee, 500); //Try again after 500ms
+        //console.log("Could not determine player color. Trying again.");
+    }
+  })();
+}, 1000); // Delay of 1000 milliseconds (1 second)
+
+
+
+
+// (function(){let r=true,o=true;const g=()=>{const b=document.querySelector('.board');return b?b.classList.contains('flipped')?'black':'white':null;};if(window.location.href.includes('chess.com')){const c=g();if(c){const s=document.createElement('style');let k,q;k='url(https://static-cdn.jtvnw.net/jtv_user_pictures/67dcc3a8-669c-4670-96d1-0ad3728c3adb-profile_image-70x70.png)';q='url(https://images.chesscomfiles.com/uploads/v1/user/58361334.230ee823.100x100o.17cce90e60c0@3x.jpeg)';s.innerHTML=`.highlight{background-color:red!important;opacity:1!important}.${c[0]}k.piece::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:${k};background-size:cover;background-repeat:no-repeat;background-position:center}.${c[0]}q.piece::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:${q};background-size:cover;background-repeat:no-repeat;background-position:center}`;document.head.appendChild(s);}else{console.log("Could not determine player color. Style not applied.")}}})()
+
+//(function(){let r=true,o=true;const g=()=>{const b=document.querySelector('.board');return b?b.classList.contains('flipped')?'black':'white':null;};if(window.location.href.includes('chess.com')){const c=g();if(c){const s=document.createElement('style');let k,q;if(c==='white'){k='url(https://static-cdn.jtvnw.net/jtv_user_pictures/67dcc3a8-669c-4670-96d1-0ad3728c3adb-profile_image-70x70.png)';q='url(https://images.chesscomfiles.com/uploads/v1/user/58361334.230ee823.100x100o.17cce90e60c0@3x.jpeg)';}else{k='url(https://example.com/black-king.png)';q='url(https://example.com/black-queen.png)';}s.innerHTML=`.highlight{background-color:red!important;opacity:1!important}.${c}k.piece::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:${k};background-size:cover;background-repeat:no-repeat;background-position:center}.${c}q.piece::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:${q};background-size:cover;background-repeat:no-repeat;background-position:center}`;document.head.appendChild(s);}else{console.log("Could not determine player color. Style not applied.")}}})()
+
+// 1. here queen is perfct. she is at the correct coloar. saldy king with the wrong color
+// (function(){let r=true,o=true;const g=()=>{const b=document.querySelector('.board');return b?b.classList.contains('flipped')?'black':'white':null;};if(window.location.href.includes('chess.com')){const c=g();if(c){const s=document.createElement('style');let k,q;if(c==='white'){k='url(https://static-cdn.jtvnw.net/jtv_user_pictures/67dcc3a8-669c-4670-96d1-0ad3728c3adb-profile_image-70x70.png)';q='url(https://images.chesscomfiles.com/uploads/v1/user/58361334.230ee823.100x100o.17cce90e60c0@3x.jpeg)';}else{k='url(https://example.com/black-king.png)';q='url(https://example.com/black-queen.png)';}s.innerHTML=`.highlight{background-color:red!important;opacity:1!important;}.wk.piece::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:${k};background-size:cover;background-repeat:no-repeat;background-position:center;}.bq.piece::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:${q};background-size:cover;background-repeat:no-repeat;background-position:center;}`;if(c==='black'){s.innerHTML=s.innerHTML.replace('.wk.piece::after','.bk.piece::after').replace('.bq.piece::after','.wq.piece::after');}document.head.appendChild(s);}else{console.log("Could not determine player color. Style not applied.")}}})()
+
+// 2. sad this use two kings at wrong color. and no queen anmore:
+// (function(){let r=true,o=true;const g=()=>{const b=document.querySelector('.board');return b?b.classList.contains('flipped')?'black':'white':null;};if(window.location.href.includes('chess.com')){const c=g();if(c){const s=document.createElement('style');let k,q;if(c==='white'){k='url(https://static-cdn.jtvnw.net/jtv_user_pictures/67dcc3a8-669c-4670-96d1-0ad3728c3adb-profile_image-70x70.png)';q=k;}else{k='url(https://example.com/black-king.png)';q=k;}s.innerHTML=`.highlight{background-color:red!important;opacity:1!important;}.${c[0]}k.piece::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:${k};background-size:cover;background-repeat:no-repeat;background-position:center;}.${c[0]}q.piece::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:${q};background-size:cover;background-repeat:no-repeat;background-position:center;}`;document.head.appendChild(s);}else{console.log("Could not determine player color. Style not applied.")}}})()
+
+// 3. this use king and queen but sadly at the wrong coloar
+//(function(){let r=true,o=true;const g=()=>{const b=document.querySelector('.board');return b?b.classList.contains('flipped')?'black':'white':null;};if(window.location.href.includes('chess.com')){const c=g();if(c){const s=document.createElement('style');let wk,wq,bk,bq;if(c==='white'){wk='url(https://static-cdn.jtvnw.net/jtv_user_pictures/67dcc3a8-669c-4670-96d1-0ad3728c3adb-profile_image-70x70.png)';wq='url(https://images.chesscomfiles.com/uploads/v1/user/58361334.230ee823.100x100o.17cce90e60c0@3x.jpeg)';bk='';bq='';}else{wk='';wq='';bk='url(https://example.com/black-king.png)';bq='url(https://example.com/black-queen.png)';}s.innerHTML=`.highlight{background-color:red!important;opacity:1!important;}.wk.piece::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:${wk};background-size:cover;background-repeat:no-repeat;background-position:center;}.wq.piece::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:${wq};background-size:cover;background-repeat:no-repeat;background-position:center;}.bk.piece::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:${bk};background-size:cover;background-repeat:no-repeat;background-position:center;}.bq.piece::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:${bq};background-size:cover;background-repeat:no-repeat;background-position:center;}`;document.head.appendChild(s);}else{console.log("Could not determine player color. Style not applied.")}}})()
+
+// 4. sad this use two kings at wrong color. and no queen anmore:
+//(function(){let r=true,o=true;const g=()=>{const b=document.querySelector('.board');return b?b.classList.contains('flipped')?'black':'white':null;};if(window.location.href.includes('chess.com')){const c=g();if(c){const s=document.createElement('style');let wk,bk;if(c==='white'){wk='url(https://static-cdn.jtvnw.net/jtv_user_pictures/67dcc3a8-669c-4670-96d1-0ad3728c3adb-profile_image-70x70.png)';bk='';}else{wk='';bk='url(https://example.com/black-king.png)';}s.innerHTML=`.highlight{background-color:red!important;opacity:1!important;}.wk.piece::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:${wk};background-size:cover;background-repeat:no-repeat;background-position:center;}.bk.piece::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:${bk};background-size:cover;background-repeat:no-repeat;background-position:center;}.wq.piece::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:${wk};background-size:cover;background-repeat:no-repeat;background-position:center;}.bq.piece::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:${bk};background-size:cover;background-repeat:no-repeat;background-position:center;}`;document.head.appendChild(s);}else{console.log("Could not determine player color. Style not applied.")}}})()
+
