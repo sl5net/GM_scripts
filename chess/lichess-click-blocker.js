@@ -41,10 +41,41 @@ if (positiveRegex.test(url) && !negativeRegex.test(url))
 
    
    if (e.button===0){
-if((Number.isInteger(totalSeconds) && totalSeconds > 1 && totalSeconds < 7*60) || e.ctrlKey)
-return;const ct=new Date().getTime();const td=ct-lct;const dx=Math.abs(e.clientX-px);const dy=Math.abs(e.clientY-py);if(nps===null&&td<dct&&dx<=tol&&dy<=tol&&px!==null&&py!==null){playSound(600);console.log("Double click");if(ml)board.removeEventListener("mousemove",ml,true);clearTimeout(tid);clearTimeout(mtmid);lct=0;lx=null;ly=null;px=null;py=null;nps=true;return;}else{lct=ct;}px=lx;py=ly;lx=e.clientX;ly=e.clientY;nps=null;console.log("nps:",nps);console.log("Left button down, activating mm listener");if(ml)board.removeEventListener("mousemove",ml,true);mtmid=setTimeout(function(){ml=function(e){const cc=cr?!e.ctrlKey:true,dx=lx===null?0:Math.abs(e.clientX-lx),dy=ly===null?0:Math.abs(e.clientY-ly);if(nps===null&&cc&&(lx!==null&&ly!==null&&(dx>tol||dy>tol))){console.log("Mouse moved beyond tolerance"+(cr?" without CTRL":"")+", simulating right click");nps=true;console.log("nps:",nps);tid=setTimeout(function(){if(ml){board.removeEventListener("mousemove",ml,true);ml=null;lx=null;ly=null;px=null;py=null;}const r=board.getBoundingClientRect();const x=r.left+r.width/2;const y=r.top+r.height/2;const mde=new MouseEvent('mousedown',{bubbles:true,cancelable:true,view:window,button:2,clientX:x,clientY:y,screenX:x,screenY:y});board.dispatchEvent(mde);const mue=new MouseEvent('mouseup',{bubbles:true,cancelable:true,view:window,button:2,clientX:x,clientY:y,screenX:x,screenY:y});board.dispatchEvent(mue);console.log("mouseup dispatched");},50);}else if(lx===null||ly===null||dx>tol||dy>tol){console.log("Mouse beyond tolerance, but no ctrl");lx=e.clientX;ly=e.clientY;}};board.addEventListener("mousemove",ml,true);},20);}},true);
+if((Number.isInteger(totalSeconds) 
+    && totalSeconds > 1 
+    && totalSeconds < 7*60) 
+   || e.ctrlKey
+   || !clickBlockerEnabled
+  )
+return;
+     const ct=new Date().getTime();
+     const td=ct-lct;
+     const dx=Math.abs(e.clientX-px);
+     const dy=Math.abs(e.clientY-py);
+     if(nps===null&&td<dct&&dx<=tol&&dy<=tol&&px!==null&&py!==null){
+       playSound(600);console.log("Double click");if(ml)board.removeEventListener("mousemove",ml,true);clearTimeout(tid);clearTimeout(mtmid);lct=0;lx=null;ly=null;px=null;py=null;nps=true;return;}else{lct=ct;}px=lx;py=ly;lx=e.clientX;ly=e.clientY;nps=null;console.log("nps:",nps);console.log("Left button down, activating mm listener");if(ml)board.removeEventListener("mousemove",ml,true);mtmid=setTimeout(function(){ml=function(e){const cc=cr?!e.ctrlKey:true,dx=lx===null?0:Math.abs(e.clientX-lx),dy=ly===null?0:Math.abs(e.clientY-ly);if(nps===null&&cc&&(lx!==null&&ly!==null&&(dx>tol||dy>tol))){console.log("Mouse moved beyond tolerance"+(cr?" without CTRL":"")+", simulating right click");nps=true;console.log("nps:",nps);tid=setTimeout(function(){if(ml){board.removeEventListener("mousemove",ml,true);ml=null;lx=null;ly=null;px=null;py=null;}const r=board.getBoundingClientRect();const x=r.left+r.width/2;const y=r.top+r.height/2;const mde=new MouseEvent('mousedown',{bubbles:true,cancelable:true,view:window,button:2,clientX:x,clientY:y,screenX:x,screenY:y});board.dispatchEvent(mde);const mue=new MouseEvent('mouseup',{bubbles:true,cancelable:true,view:window,button:2,clientX:x,clientY:y,screenX:x,screenY:y});board.dispatchEvent(mue);console.log("mouseup dispatched");},50);}else if(lx===null||ly===null||dx>tol||dy>tol){console.log("Mouse beyond tolerance, but no ctrl");lx=e.clientX;ly=e.clientY;}};board.addEventListener("mousemove",ml,true);},20);}},true);
 
   }, 1000); // Delay of 1000 milliseconds (1 second)
+
+  
+  	let clickBlockerEnabled = localStorage.getItem('clickBlockerEnabled') === 'true' || localStorage.getItem('clickBlockerEnabled') === null; //enable by default or if no value
+    let setupButton = null;
+    function addSetupButton() {
+        if (setupButton) return;
+
+        setupButton = document.createElement('button');
+        setupButton.textContent = 'Blocker: ' + (clickBlockerEnabled ? 'On' : 'Off');
+        setupButton.style.cssText = 'position: fixed; top: 30px; right: 10px; z-index: 10000;';
+        setupButton.onclick = function() {
+            clickBlockerEnabled =! clickBlockerEnabled;
+          	localStorage.setItem('clickBlockerEnabled', clickBlockerEnabled);
+
+            setupButton.textContent = 'Blocker: ' + (clickBlockerEnabled ? 'On' : 'Off');
+        };
+        document.body.appendChild(setupButton);
+    }
+
+  addSetupButton();
 
   
 } // end of regex url
