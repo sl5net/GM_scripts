@@ -1,16 +1,16 @@
 
 tells
 
-"I'll be right back\nGleich wieder da%E2%9D%A4%EF%B8%8F"
+"I'll be right back\nGleich wieder da"
 
 and stops - for ever - when you move mouse fast
 
 ```js
 // ==UserScript==
-// @name     GM li brb scrreensaver9
+// @name     GM li brb scrreensaver12
 // @namespace    https://lichess.org/
-// @version  1.8
-// @description  show be right back. screensaver with changing text and images + image titles
+// @version  2.2
+// @description  show be right back. screensaver with changing text and images + image titles + setup comic view
 // @match   https://lichess.org/*
 // @match   https://dicechess.com/*
 // @match   https://www.chess.com/*
@@ -37,7 +37,6 @@ and stops - for ever - when you move mouse fast
     
     { url: 'https://storage.ko-fi.com/cdn/fullLogoKofi.png', title: 'Buy a Coffee ko-fi.com/plango ' },
     { url: 'https://addons.mozilla.org/user-media/addon_icons/0/748-64.png?modified=1531822767', title: 'Greasemonkey userscript manager 4 Firefox' },
-    { url: 'https://addons.mozilla.org/user-media/addon_icons/0/748-64.png?modified=1531822767', title: 'Greasemonkey userscript manager 4 Firefox' },
     { url: 'https://images.chesscomfiles.com/uploads/v1/user/25332026.f41b9fb2.50x50o.0d10e7055274.jpeg', title: 'Chess.com Tandem/Bughouse World Championship 2024: prize $2,500' },
     { url: 'https://alternative.me/media/256/0-a-d-icon-yfx2dic847rkvocy-c.png', title: 'play0ad.com/  0 A.D. is a free, open-source, historical Real Time Strategy (RTS)' },
     { url: 'https://yt3.ggpht.com/W6ivGrRJrNymjcuESV4S8vEqGLTl2Rpys3dBWAEQ-CA_nsn4JdIteowMqe8Vl36hEe0tOScp4A=s108-c-k-c0x00ffffff-no-rj', title: 'youtube.com/@plan0go 0 A.D. YouTuber ' },
@@ -56,18 +55,20 @@ and stops - for ever - when you move mouse fast
   let a = null;
   let l = null;
   let o;
-  let n = 1000 * 5; //55 seconds default
+  let n = 1000 * 5; //5 seconds default
   let c = null;
   let X = 0;
   let cachedImg = null;
   let cachedTitle = null;
   let isMouseAtBottom = false;
   let inactiveStartTime = 0;
-  let timeoutButton = null;
+  let mainButton = null;
   let messageIndex = 0;
   let messageTimer = null;
   let imageIndex = 0;
   let imageTimer = null;
+  let comicViewActive = false;
+  let comicContainer = null;
 
 
   const brbMessages = [
@@ -85,25 +86,18 @@ and stops - for ever - when you move mouse fast
   }
 
   // Add button to change timeout
-  function addTimeoutButton() {
-    if (timeoutButton) return;
+    function addMainButton() {
+    if (mainButton) return;
 
-    timeoutButton = document.createElement('button');
-    timeoutButton.textContent = 'Set Timeout';
-    timeoutButton.style.cssText = 'position: fixed; top: 10px; right: 10px; z-index: 10000; display:none;';
-    timeoutButton.onclick = function(){
-      const newTimeout = parseInt(prompt("Enter new inactivity timeout in seconds", n / 1000), 10) * 1000;
-      if(newTimeout > 0){
-        n = newTimeout
-        localStorage.setItem('inactivityTimeout', n);
-        resetTimer();
-      }
-    }
+    mainButton = document.createElement('button');
+    mainButton.textContent = '⚙️'; // Initial button text
+        mainButton.style.cssText = 'position: fixed; top: 10px; right: 10px; z-index: 10000;';
+    mainButton.onclick = mainButtonAction;
 
-    document.body.appendChild(timeoutButton);
+    document.body.appendChild(mainButton);
   }
 
-  addTimeoutButton()
+    addMainButton();
 
   function animateTicker() {
     if (!r) return;
@@ -127,7 +121,7 @@ and stops - for ever - when you move mouse fast
     }
   function animate() {
     if (!r) return;
-    if (timeoutButton) timeoutButton.style.display = 'block';
+    //if (timeoutButton) timeoutButton.style.display = 'block';
 
     let x = Math.random() * (window.innerWidth - 100);
     let y = Math.random() * (window.innerHeight - 100);
@@ -168,7 +162,6 @@ and stops - for ever - when you move mouse fast
         img.remove();
           titleElement.remove();
         txt.remove();
-          if (timeoutButton) timeoutButton.style.display = 'none';
         clearInterval(messageTimer);
           clearInterval(imageTimer);
         return;
@@ -238,6 +231,59 @@ and stops - for ever - when you move mouse fast
     a = i;
     l = t;
   });
+
+    function mainButtonAction() {
+      if (comicViewActive) {
+        hideComicView();
+        mainButton.textContent = '⚙️'; // Change back to settings icon
+      } else {
+           const newTimeout = parseInt(prompt("Enter new inactivity timeout in seconds, or press cancel for view all", n / 1000), 10) * 1000;
+            if (newTimeout > 0) {
+                n = newTimeout;
+                localStorage.setItem('inactivityTimeout', n);
+                resetTimer();
+            } else {
+            showComicView();
+            mainButton.textContent = '❌'; // Change to close icon
+          }
+      }
+    }
+
+    function showComicView() {
+        comicViewActive = true;
+
+        // Create container
+        comicContainer = document.createElement('div');
+        comicContainer.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.8);z-index:10001;overflow-y:scroll;padding:20px;display:grid;grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));grid-gap:20px;align-content: start;';
+        document.body.appendChild(comicContainer);
+
+        imageURLs.forEach(item => {
+            const imageContainer = document.createElement('div');
+            imageContainer.style.cssText = 'display:flex;flex-direction:column;align-items:center;';
+
+            const img = document.createElement('img');
+            img.src = item.url;
+            img.style.cssText = 'max-width:100%;height:auto;';
+
+            const titleElement = document.createElement('div');
+            titleElement.textContent = item.title;
+            titleElement.style.cssText = 'color:white;text-align:center;font-size:12px;font-weight:bold;';
+
+
+            imageContainer.appendChild(img);
+            imageContainer.appendChild(titleElement);
+            comicContainer.appendChild(imageContainer);
+
+        });
+    }
+
+    function hideComicView() {
+        comicViewActive = false;
+        if (comicContainer) {
+            comicContainer.remove();
+            comicContainer = null;
+        }
+    }
 
   resetTimer();
 
