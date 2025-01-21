@@ -19,28 +19,54 @@ and stops - for ever - when you move mouse fast
 
 (function() {
   const imageURLs = [
+    // 🨄🨈🨙🨝🨮🨲🩃🩇🩑
     { url: 'https://sl5.de/wp-content/uploads/2025/01/SL5net_logo_white_shadow_on_blue_w990.png', title: 'Free Courses from sl5.de for Lichess & 0 A.D. Patrons' },
     { url: 'https://seccdn.libravatar.org/avatar/098df46b093753e4a1686d74df5b876d?s=160&d=404&=1', title: 'Send me a tip! liberapay.com/seeh/ ' },
-    { url: 'https://i.imgur.com/iC5KiE0.jpg', title: 'Schachspieler seeh' },
+    { url: 'https://i.imgur.com/iC5KiE0.jpg', title: 'Schachspieler seeh 🨄🨈🨙🨝🨮🨲🩃🩇🩑' },
     { url: 'https://storage.ko-fi.com/cdn/fullLogoKofi.png', title: 'Buy a Coffee ko-fi.com/plango ' },
-    { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/67dcc3a8-669c-4670-96d1-0ad3728c3adb-profile_image-70x70.png', title: 'Schachspieler seeh auf Twitch' },    
-    { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/14736469-dd75-4744-b685-487ab890890b-profile_image-70x70.png', title: 'Schachopa auf Twitch' },
-    { url: 'https://storage.ko-fi.com/cdn/useruploads/eb495aa0-ec22-4faf-b1ea-f2d3f289d0ba.png', title: 'Buy a Coffee ko-fi.com/plango ' },
-    { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/c1049f40-f83b-408e-9057-76ebd57e35ff-profile_image-70x70.png', title: 'Schachspieler KugelBuch auf Twitch' },
-    { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/3a67aaa5-a1eb-4375-b2b4-332a7a6b4b05-profile_image-70x70.png', title: 'Großmeister JanistanTV auf Twitch' },
-    { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/40c1cb9b-d351-45f1-a092-24e6da4758b9-profile_image-70x70.png', title: 'Großmeister Rasmus Svane -> gmrasmussvane auf Twitch' },
-    { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/290c1f23-c524-4f7d-ab1e-8d603f2230eb-profile_image-70x70.png', title: 'WCM KatharinaReinecke auf Twitch' },
+    { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/67dcc3a8-669c-4670-96d1-0ad3728c3adb-profile_image-70x70.png'
+     , title: 'Schachspieler seeh auf Twitch' },    
+    { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/14736469-dd75-4744-b685-487ab890890b-profile_image-70x70.png'
+     , title: 'Schachopa auf Twitch' },
+    { url: 'https://storage.ko-fi.com/cdn/useruploads/eb495aa0-ec22-4faf-b1ea-f2d3f289d0ba.png'
+     , title: 'Buy a Coffee ko-fi.com/plango ' },
+    { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/c1049f40-f83b-408e-9057-76ebd57e35ff-profile_image-70x70.png'
+     , title: 'Schachspieler KugelBuch auf Twitch' },
+    { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/3a67aaa5-a1eb-4375-b2b4-332a7a6b4b05-profile_image-70x70.png'
+     , title: 'Großmeister JanistanTV auf Twitch' },
+    { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/40c1cb9b-d351-45f1-a092-24e6da4758b9-profile_image-70x70.png'
+     , title: 'Großmeister Rasmus Svane -> gmrasmussvane auf Twitch' },
+    { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/290c1f23-c524-4f7d-ab1e-8d603f2230eb-profile_image-70x70.png'
+     , title: 'WCM KatharinaReinecke auf Twitch' },
+    
+    { url: 'https://matrix.tchncs.de/_matrix/media/v3/thumbnail/tchncs.de/f02a44c27470a3747a72edaa363c020758551be0?width=160&height=160&method=crop&allow_redirect=true'
+     , title: 'Schachspielerin GLaDOS_chess Twitch, Jumeko-Jabami lichess' },
+
+    
+    { url: 'https://xn--simonkrner-jcb.de/img/sympathischer_dude.jpg'
+     , title: 'Schachspieler Luuubb lichess . Danke für die Spiele und deine OpenSource-Arbeiten 🦥 🦧 🐒' },
+
+
+    
+    { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/f6d01e0a-4afb-4371-8dc2-56921ff70477-profile_image-70x70.png'
+     , title: 'Schachspieler Ryugine Twitch. Thanks for your Suport' },
+    
+    { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/39cb2432-b47c-430f-aa07-439306b1449f-profile_image-70x70.png'
+     , title: 'ilyes_plays_chess Twitch. ilyes_dev lichess. Thanks for your Suport' },
     
     
-    
-    
-    
-    { url: 'https://storage.ko-fi.com/cdn/fullLogoKofi.png', title: 'Buy a Coffee ko-fi.com/plango ' },
-    { url: 'https://addons.mozilla.org/user-media/addon_icons/0/748-64.png?modified=1531822767', title: 'Greasemonkey userscript manager 4 Firefox' },
-    { url: 'https://images.chesscomfiles.com/uploads/v1/user/25332026.f41b9fb2.50x50o.0d10e7055274.jpeg', title: 'Chess.com Tandem/Bughouse World Championship 2024: prize $2,500' },
-    { url: 'https://alternative.me/media/256/0-a-d-icon-yfx2dic847rkvocy-c.png', title: 'play0ad.com/  0 A.D. is a free, open-source, historical Real Time Strategy (RTS)' },
-    { url: 'https://yt3.ggpht.com/W6ivGrRJrNymjcuESV4S8vEqGLTl2Rpys3dBWAEQ-CA_nsn4JdIteowMqe8Vl36hEe0tOScp4A=s108-c-k-c0x00ffffff-no-rj', title: 'youtube.com/@plan0go 0 A.D. YouTuber ' },
-    { url: 'https://i.imgur.com/88Dtfz2.png', title: 'Web-Nerd/Dipl.Informatiker(FH) Sebastian Lauffer aus SL5.de | 30Jahre+ Erfahrung | 0 A.D. member + player' },
+    { url: 'https://storage.ko-fi.com/cdn/fullLogoKofi.png'
+     , title: 'Buy a Coffee ko-fi.com/plango ' },
+    { url: 'https://addons.mozilla.org/user-media/addon_icons/0/748-64.png?modified=1531822767'
+     , title: 'Greasemonkey userscript manager 4 Firefox' },
+    { url: 'https://images.chesscomfiles.com/uploads/v1/user/25332026.f41b9fb2.50x50o.0d10e7055274.jpeg'
+     , title: 'Chess.com Tandem/Bughouse World Championship 2024: prize $2,500' },
+    { url: 'https://alternative.me/media/256/0-a-d-icon-yfx2dic847rkvocy-c.png'
+     , title: 'play0ad.com/  0 A.D. is a free, open-source, historical Real Time Strategy (RTS)' },
+    { url: 'https://yt3.ggpht.com/W6ivGrRJrNymjcuESV4S8vEqGLTl2Rpys3dBWAEQ-CA_nsn4JdIteowMqe8Vl36hEe0tOScp4A=s108-c-k-c0x00ffffff-no-rj'
+     , title: 'youtube.com/@plan0go 0 A.D. YouTuber ' },
+    { url: 'https://i.imgur.com/88Dtfz2.png'
+     , title: 'Web-Nerd/Dipl.Informatiker(FH) Sebastian Lauffer aus SL5.de | 30Jahre+ Erfahrung | 0 A.D. member + player' },
     
     
     
@@ -132,7 +158,7 @@ and stops - for ever - when you move mouse fast
     // Reuse cached image or create it if it doesnt exist.
     const img = cachedImg || (()=>{
         const newImg = document.createElement('img');
-      newImg.style.cssText = 'position:fixed;z-index:9999;width:100px;height:auto;pointer-events:none;';
+      newImg.style.cssText = 'position:fixed;z-index:9999;width:70px;height:auto;pointer-events:none;';
       cachedImg = newImg;
       return newImg;
     })();
@@ -263,7 +289,7 @@ and stops - for ever - when you move mouse fast
 
             const img = document.createElement('img');
             img.src = item.url;
-            img.style.cssText = 'max-width:100%;height:auto;';
+            img.style.cssText = 'width:70px;height:auto;';
 
             const titleElement = document.createElement('div');
             titleElement.textContent = item.title;
