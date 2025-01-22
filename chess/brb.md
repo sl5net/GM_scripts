@@ -7,7 +7,7 @@ and stops - for ever - when you move mouse fast
 
 ```js
 // ==UserScript==
-// @name     GM li brb scrreensaver19
+// @name     GM li brb scrreensaver19b
 // @namespace    https://lichess.org/
 // @version  2.8
 // @description  show be right back. screensaver with changing text and images + image titles + setup comic view + automatic switch to LichessTV
@@ -100,7 +100,7 @@ and stops - for ever - when you move mouse fast
     const minSpeed = 0.3;
     const imageSize = 70;
     const tvPage = "https://lichess.org/tv/rapid";
-    const autoSwitchTimeout = 1000 * 60 * 15; // 15 minutes
+    const autoSwitchTimeoutDefault = 1000 * 60 * 15; // 15 minutes
 
 
     const brbMessages = [
@@ -158,9 +158,9 @@ and stops - for ever - when you move mouse fast
           imageIndex++;
       }
     function animate() {
+      alert("animate called. r: " + r)
       if (!r) return;
-      //if (timeoutButton) timeoutButton.style.display = 'block';
-
+    
       let x = Math.random() * (window.innerWidth - 100);
       let y = Math.random() * (window.innerHeight - 100);
         let baseDx = Math.random() * 2 - 1;
@@ -262,30 +262,67 @@ and stops - for ever - when you move mouse fast
       animateTicker();
     }
 
-      function checkInactivityAndSwitchPage() {
-          if (!r) return;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  function resetTimer() {
+    clearTimeout(o);
+    r = false;
+      messageIndex = 0;
+      imageIndex = 0;
+      alert("resetTimer called. r: " + r)
+    o = setTimeout(function() {
+      inactiveStartTime = Date.now();
+        alert("resetTimer setTimeout. inactiveStartTime: " + inactiveStartTime);
+      r = true;
+      alert("resetTimer setTimeout. r: " + r)
+      animate();
+    }, moveDelay);
+  }
 
-          const timeSinceInactive = Date.now() - inactiveStartTime;
-           if (tvDelay != null && timeSinceInactive > tvDelay) {
-              if (window.location.href !== tvPage) {
-                window.location.href = tvPage;
-               }
-          }
-      }
+  
+ function checkInactivityAndSwitchPage() {
+   alert("checkInactivityAndSwitchPage. start r: " + r);
+    if (!r) {
+     alert("checkInactivityAndSwitchPage. r is false, exiting");
+     return;
+    }
+    alert("checkInactivityAndSwitchPage. r: " + r);
 
-    function resetTimer() {
-      clearTimeout(o);
-      r = false;
-        messageIndex = 0;
-        imageIndex = 0;
-        inactiveStartTime = Date.now(); // Reset inactivity timer
-      o = setTimeout(function() {
-        r = true;
-        animate();
-          checkInactivityAndSwitchPage();
-      }, moveDelay);
+    if(tvDelay == null) {
+     alert("checkInactivityAndSwitchPage. tvDelay is null, exiting")
+     return;
+    }
+     alert("checkInactivityAndSwitchPage. tvDelay: " + tvDelay);
+    
+    if (typeof tvDelay !== 'number') {
+        alert("checkInactivityAndSwitchPage. tvDelay is NOT a number! Value: " + tvDelay);
+        return;
     }
 
+
+    const timeSinceInactive = Date.now() - inactiveStartTime;
+    alert("checkInactivityAndSwitchPage. timeSinceInactive: " + timeSinceInactive);
+    if (tvDelay != null && timeSinceInactive > tvDelay) {
+        alert("checkInactivityAndSwitchPage. Time condition is met: " + timeSinceInactive + ", " + tvDelay);
+        if (window.location.href !== tvPage) {
+           alert("checkInactivityAndSwitchPage. Page will redirect");
+          window.location.href = tvPage;
+        }
+    }
+}
+  
+  
+  
+  
+  
+  
     document.addEventListener('mousemove', e => {
       mouseX = e.clientX;
       mouseY = e.clientY;
@@ -396,6 +433,6 @@ and stops - for ever - when you move mouse fast
     }
 
     resetTimer();
-    setInterval(checkInactivityAndSwitchPage, 60000); // Check every minute for inactivity and page switch
+    setInterval(checkInactivityAndSwitchPage, 1000); // Check every second for inactivity and page switch
 
 })();
