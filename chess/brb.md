@@ -7,10 +7,10 @@ and stops - for ever - when you move mouse fast
 
 ```js
 // ==UserScript==
-// @name     GM li brb scrreensaver12
+// @name     GM li brb scrreensaver17
 // @namespace    https://lichess.org/
-// @version  2.2
-// @description  show be right back. screensaver with changing text and images + image titles + setup comic view
+// @version  2.6
+// @description  show be right back. screensaver with changing text and images + image titles + setup comic view + automatic switch to LichessTV
 // @match   https://lichess.org/*
 // @match   https://dicechess.com/*
 // @match   https://www.chess.com/*
@@ -19,13 +19,12 @@ and stops - for ever - when you move mouse fast
 
 (function() {
   const imageURLs = [
-    // 🨄🨈🨙🨝🨮🨲🩃🩇🩑
     { url: 'https://sl5.de/wp-content/uploads/2025/01/SL5net_logo_white_shadow_on_blue_w990.png', title: 'Free Courses from sl5.de for Lichess & 0 A.D. Patrons' },
     { url: 'https://seccdn.libravatar.org/avatar/098df46b093753e4a1686d74df5b876d?s=160&d=404&=1', title: 'Send me a tip! liberapay.com/seeh/ ' },
     { url: 'https://i.imgur.com/iC5KiE0.jpg', title: 'Schachspieler seeh 🨄🨈🨙🨝🨮🨲🩃🩇🩑' },
     { url: 'https://storage.ko-fi.com/cdn/fullLogoKofi.png', title: 'Buy a Coffee ko-fi.com/plango ' },
     { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/67dcc3a8-669c-4670-96d1-0ad3728c3adb-profile_image-70x70.png'
-     , title: 'Schachspieler seeh auf Twitch' },    
+     , title: 'Schachspieler seeh auf Twitch' },
     { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/14736469-dd75-4744-b685-487ab890890b-profile_image-70x70.png'
      , title: 'Schachopa auf Twitch' },
     { url: 'https://storage.ko-fi.com/cdn/useruploads/eb495aa0-ec22-4faf-b1ea-f2d3f289d0ba.png'
@@ -95,7 +94,13 @@ and stops - for ever - when you move mouse fast
   let imageTimer = null;
   let comicViewActive = false;
   let comicContainer = null;
-
+  let mouseX = -1000;
+  let mouseY = -1000;
+    const proximityThreshold = 200;
+  const minSpeed = 0.3;
+ const imageSize = 70;
+ const tvPage = "https://lichess.org/tv/rapid";
+  const autoSwitchTimeout = 1000 * 60 * 15; // 15 minutes
 
   const brbMessages = [
     "I'll be right back",
@@ -151,8 +156,12 @@ and stops - for ever - when you move mouse fast
 
     let x = Math.random() * (window.innerWidth - 100);
     let y = Math.random() * (window.innerHeight - 100);
-    let dx = Math.random() * 2 - 1;
-    let dy = Math.random() * 2 - 1;
+      let baseDx = Math.random() * 2 - 1;
+      let baseDy = Math.random() * 2 - 1;
+
+    let dx = baseDx;
+    let dy = baseDy;
+
 
 
     // Reuse cached image or create it if it doesnt exist.
@@ -192,17 +201,45 @@ and stops - for ever - when you move mouse fast
           clearInterval(imageTimer);
         return;
       }
-      x += dx;
-      y += dy;
-      if (x + 100 > window.innerWidth || x < 0) dx = -dx;
-      if (y + 100 > window.innerHeight || y < 0) dy = -dy;
+        // Calculate distance to mouse
+        const distance = Math.sqrt((x + imageSize/2 - mouseX) ** 2 + (y + imageSize/2 - mouseY) ** 2);
+        // Adjust speed based on mouse proximity
+        const speedMultiplier = distance < proximityThreshold ? 12 : 1;
+
+
+      // Immediate boundary check and correction
+        if (x < 0) {
+          x = 0;
+           baseDx = -baseDx;
+          if(Math.abs(baseDx) < minSpeed) baseDx = baseDx > 0 ? minSpeed : -minSpeed;
+        } else if (x + imageSize > window.innerWidth) {
+          x = window.innerWidth - imageSize;
+          baseDx = -baseDx;
+           if(Math.abs(baseDx) < minSpeed) baseDx = baseDx > 0 ? minSpeed : -minSpeed;
+
+        }
+
+        if (y < 0) {
+          y = 0;
+         baseDy = -baseDy;
+          if(Math.abs(baseDy) < minSpeed) baseDy = baseDy > 0 ? minSpeed : -minSpeed;
+        } else if (y + imageSize > window.innerHeight) {
+          y = window.innerHeight - imageSize;
+            baseDy = -baseDy;
+          if(Math.abs(baseDy) < minSpeed) baseDy = baseDy > 0 ? minSpeed : -minSpeed;
+        }
+       dx = baseDx * speedMultiplier;
+        dy = baseDy * speedMultiplier;
+      
+        x += dx;
+        y += dy;
 
       img.style.left = x + 'px';
       img.style.top = y + 'px';
         titleElement.style.left = x + 'px';
-      titleElement.style.top = (y + 100) + 'px';
+      titleElement.style.top = (y + imageSize) + 'px';
       txt.style.left = x + 'px';
-      txt.style.top = (y + 120) + 'px';
+      txt.style.top = (y + imageSize + 20) + 'px';
 
 
       requestAnimationFrame(move);
@@ -219,19 +256,34 @@ and stops - for ever - when you move mouse fast
     animateTicker();
   }
 
+    function checkInactivityAndSwitchPage() {
+        if (!r) return;
+
+        const timeSinceInactive = Date.now() - inactiveStartTime;
+        if (timeSinceInactive > autoSwitchTimeout) {
+           if (window.location.href !== tvPage) {
+               window.location.href = tvPage;
+            }
+        }
+    }
+
   function resetTimer() {
     clearTimeout(o);
     r = false;
       messageIndex = 0;
       imageIndex = 0;
-    inactiveStartTime = Date.now(); // Store the start time
+      inactiveStartTime = Date.now(); // Reset inactivity timer
     o = setTimeout(function() {
       r = true;
       animate();
+        checkInactivityAndSwitchPage();
     }, n);
   }
 
   document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+
     const i = e.clientX;
     const t = e.clientY;
 
@@ -261,7 +313,7 @@ and stops - for ever - when you move mouse fast
     function mainButtonAction() {
       if (comicViewActive) {
         hideComicView();
-        mainButton.textContent = '⚙️'; // Change back to settings icon
+        mainButton.textContent = '⚙️';
       } else {
            const newTimeout = parseInt(prompt("Enter new inactivity timeout in seconds, or press cancel for view all", n / 1000), 10) * 1000;
             if (newTimeout > 0) {
@@ -270,7 +322,7 @@ and stops - for ever - when you move mouse fast
                 resetTimer();
             } else {
             showComicView();
-            mainButton.textContent = '❌'; // Change to close icon
+            mainButton.textContent = '❌';
           }
       }
     }
@@ -278,7 +330,6 @@ and stops - for ever - when you move mouse fast
     function showComicView() {
         comicViewActive = true;
 
-        // Create container
         comicContainer = document.createElement('div');
         comicContainer.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.8);z-index:10001;overflow-y:scroll;padding:20px;display:grid;grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));grid-gap:20px;align-content: start;';
         document.body.appendChild(comicContainer);
@@ -312,5 +363,6 @@ and stops - for ever - when you move mouse fast
     }
 
   resetTimer();
+    setInterval(checkInactivityAndSwitchPage, 60000); // Check every minute for inactivity and page switch
 
 })();
