@@ -18,6 +18,9 @@ and stops - for ever - when you move mouse fast
 // ==/UserScript==
 
 (function() {
+    let alertsEnabled = false; // Added variable for alert switch
+  	const doDebug = false; // set true if we seach script errors
+
   const imageURLs = [
       { url: 'https://sl5.de/wp-content/uploads/2025/01/SL5net_logo_white_shadow_on_blue_w990.png', title: 'Free Courses from sl5.de for Lichess & 0 A.D. Patrons' },
       { url: 'https://seccdn.libravatar.org/avatar/098df46b093753e4a1686d74df5b876d?s=160&d=404&=1', title: 'Send me a tip! liberapay.com/seeh/ ' },
@@ -51,6 +54,34 @@ and stops - for ever - when you move mouse fast
       { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/f6d01e0a-4afb-4371-8dc2-56921ff70477-profile_image-70x70.png'
        , title: 'Schachspieler Ryugine Twitch. Thanks for your Suport' },
 
+      { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/97024734-41cf-41ab-a82d-df39331bcd31-profile_image-70x70.png'
+       , title: 'Schachspielerin WIM bluhmanda Twitch, SonjaBluhm lichess' },
+    
+    
+    
+    
+    
+          { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/78ce1bf1-4f92-4beb-9c1a-9c35a8469a98-profile_image-70x70.png'
+       , title: 'Josefine Heinemann WGM, lichess: JosefineHeinemann , Twitch: frauenschachexperten , youtube: josefineschach' },
+    
+    
+    
+    
+
+              { url: 'https://static.wixstatic.com/media/d2439e_1ec82775df5341e1852da904bdd0f3bf~mv2.jpg'
+       , title: 'Josefine Heinemann WGM, lichess: JosefineHeinemann , Twitch: frauenschachexperten , youtube: josefineschach' },
+
+    
+    
+    
+
+          { url: 'https://hsk1830.de/wp-content/uploads/2024/01/20240120-SonjaBluhm.jpg'
+       , title: 'Schachspielerin WIM, bluhmanda Twitch, SonjaBluhm lichess' },
+
+    
+    
+    
+    
       { url: 'https://static-cdn.jtvnw.net/jtv_user_pictures/39cb2432-b47c-430f-aa07-439306b1449f-profile_image-70x70.png'
        , title: 'ilyes_plays_chess Twitch. ilyes_dev lichess. Thanks for your Suport' },
 
@@ -135,7 +166,18 @@ and stops - for ever - when you move mouse fast
     }
 
       addMainButton();
-
+    
+    // Add button to toggle alerts
+      function addAlertsButton() {
+	      if (!doDebug) return;      
+          const alertsButton = document.createElement('button');
+          alertsButton.textContent = '📢';
+          alertsButton.style.cssText = 'position: fixed; top: 10px; right: 60px; z-index: 10000;';
+          alertsButton.onclick = toggleAlerts;
+          document.body.appendChild(alertsButton);
+       }
+    
+    addAlertsButton();
 
     function animateTicker() {
       if (!r) return;
@@ -158,7 +200,8 @@ and stops - for ever - when you move mouse fast
           imageIndex++;
       }
     function animate() {
-      alert("animate called. r: " + r)
+      
+      if (alertsEnabled) alert("animate called. r: " + r);
       if (!r) return;
     
       let x = Math.random() * (window.innerWidth - 100);
@@ -270,53 +313,58 @@ and stops - for ever - when you move mouse fast
   
   
   
-  
-  function resetTimer() {
+    function resetTimer() {
     clearTimeout(o);
     r = false;
       messageIndex = 0;
       imageIndex = 0;
-      alert("resetTimer called. r: " + r)
+       if (alertsEnabled)  alert("resetTimer called. r: " + r);
     o = setTimeout(function() {
       inactiveStartTime = Date.now();
-        alert("resetTimer setTimeout. inactiveStartTime: " + inactiveStartTime);
+      if (alertsEnabled) alert("resetTimer setTimeout. inactiveStartTime: " + inactiveStartTime);
       r = true;
-      alert("resetTimer setTimeout. r: " + r)
+      if (alertsEnabled)  alert("resetTimer setTimeout. r: " + r);
       animate();
     }, moveDelay);
   }
 
   
- function checkInactivityAndSwitchPage() {
-   alert("checkInactivityAndSwitchPage. start r: " + r);
+function checkInactivityAndSwitchPage() {
+    if (alertsEnabled) alert("checkInactivityAndSwitchPage. start r: " + r);
     if (!r) {
-     alert("checkInactivityAndSwitchPage. r is false, exiting");
+     if (alertsEnabled) alert("checkInactivityAndSwitchPage. r is false, exiting");
      return;
     }
-    alert("checkInactivityAndSwitchPage. r: " + r);
+    if (alertsEnabled)  alert("checkInactivityAndSwitchPage. r: " + r);
 
     if(tvDelay == null) {
-     alert("checkInactivityAndSwitchPage. tvDelay is null, exiting")
+    if (alertsEnabled) alert("checkInactivityAndSwitchPage. tvDelay is null, exiting")
      return;
     }
-     alert("checkInactivityAndSwitchPage. tvDelay: " + tvDelay);
+    if (alertsEnabled) alert("checkInactivityAndSwitchPage. tvDelay: " + tvDelay);
     
     if (typeof tvDelay !== 'number') {
-        alert("checkInactivityAndSwitchPage. tvDelay is NOT a number! Value: " + tvDelay);
+    if (alertsEnabled)  alert("checkInactivityAndSwitchPage. tvDelay is NOT a number! Value: " + tvDelay);
         return;
     }
 
-
     const timeSinceInactive = Date.now() - inactiveStartTime;
-    alert("checkInactivityAndSwitchPage. timeSinceInactive: " + timeSinceInactive);
+     if (alertsEnabled) alert("checkInactivityAndSwitchPage. timeSinceInactive: " + timeSinceInactive);
     if (tvDelay != null && timeSinceInactive > tvDelay) {
-        alert("checkInactivityAndSwitchPage. Time condition is met: " + timeSinceInactive + ", " + tvDelay);
+       if (alertsEnabled) alert("checkInactivityAndSwitchPage. Time condition is met: " + timeSinceInactive + ", " + tvDelay);
         if (window.location.href !== tvPage) {
-           alert("checkInactivityAndSwitchPage. Page will redirect");
-          window.location.href = tvPage;
+           if (alertsEnabled) alert("checkInactivityAndSwitchPage. Page will redirect");
+         window.location.href = tvPage;
         }
     }
 }
+  
+    function toggleAlerts() {
+       alertsEnabled = !alertsEnabled;
+       alert("Alerts are now " + (alertsEnabled ? "ON" : "OFF"));
+    }
+
+  
   
   
   
