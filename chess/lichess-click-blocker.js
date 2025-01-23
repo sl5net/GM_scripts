@@ -7,7 +7,7 @@
 // @grant    none
 // ==/UserScript==
 
-
+// 🨄🨈🨙🨝🨮🨲🩃🩇🩑
 window.addEventListener ("load", Greasemonkey_main, false);
 
 function Greasemonkey_main () {
@@ -27,8 +27,14 @@ if (positiveRegex.test(url) && !negativeRegex.test(url))
   setTimeout(function() { // Wrap the main script logic in setTimeout
 
 
-    const board=document.querySelector("cg-board");if(!board&&!document.getElementById('board-layout-chessboard'))
+    const board=document.querySelector("cg-board");
+    
+    if(false){ // that was interstending when it it has worked as bookmarklet. older days. not as greasmokey script.
+      
+    if(!board&&!document.getElementById('board-layout-chessboard'))
       window.location.href='https://lichess.org/streak';if(!board){console.error("Board not found");return;}
+    }
+    
     function playSound(t){const a=new(window.AudioContext||window.webkitAudioContext);
                           const o=a.createOscillator();const g=a.createGain();
                           o.connect(g);g.connect(a.destination);o.type='sine';o.frequency.value=440;g.gain.value=0.1;o.start();setTimeout(()=>o.stop(),t);}let lx=null,ly=null,px=null,py=null,tol=14,ml=null,lct=0,dct=500,tid=null,cr=true,mtmid=null,nps=true;board.addEventListener("mousedown",function(e){let m=null,p=document.querySelector('.puzzle__feedback.play');if(p){let i=p.querySelector('.instruction em');if(i){if(i.textContent.includes('black'))m='black';else if(i.textContent.includes('white'))m='white';}}
