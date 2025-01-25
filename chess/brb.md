@@ -7,9 +7,9 @@ and stops - for ever - when you move mouse fast
 
 ```js
 // ==UserScript==
-// @name     GM li brb scrreensaver19b
+// @name     GM li brb scrreensaver19c
 // @namespace    https://lichess.org/
-// @version  2.8
+// @version  2.9
 // @description  show be right back. screensaver with changing text and images + image titles + setup comic view + automatic switch to LichessTV
 // @match   https://lichess.org/*
 // @match   https://dicechess.com/*
@@ -22,6 +22,58 @@ and stops - for ever - when you move mouse fast
   	const doDebug = false; // set true if we seach script errors
 
   const imageURLs = [
+    
+    
+  { url: 'https://qph.cf2.quoracdn.net/main-qimg-6e7144652bd277c4722f5e68c68f9356-lq', title: 'Humans 100 million years ago' },
+  { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/CarpolestesCL.png/300px-CarpolestesCL.png'
+   , title: 'Humans 80 Million years ago' },
+  { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Aegyptopithecus_NT.jpg/300px-Aegyptopithecus_NT.jpg'
+   , title: 'Humans 50 Million years ago' },
+  { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Proconsul_NT.jpg/300px-Proconsul_NT.jpg'
+   , title: 'Humans 30 Million years ago' },
+  { url: 'https://showme.missouri.edu/wp-content/uploads/2019/09/1-Rudapithecus-reconstruction-940x686.jpg'
+   , title: '10 million years ago' },
+  { url: 'https://imgix.ranker.com/user_node_img/50060/1001195177/original/sahelanthropus-tchadensis-photo-u1?auto=format&q=60&fit=crop&fm=pjpg&dpr=2&w=500'
+   , title: '7 million years ago. süd Afrika' },
+    { url: 'https://imgix.ranker.com/user_node_img/50060/1001195179/original/orrorin-tugenensis-photo-u2?auto=format&q=60&fit=crop&fm=pjpg&dpr=2&w=500'
+     , title: 'Kenya 6 million years' },
+  { url: 'https://imgix.ranker.com/user_node_img/50060/1001195180/original/ardipithecus-kadabba-photo-u1?auto=format&q=60&fit=crop&fm=pjpg&dpr=2&w=500'
+   , title: 'Humans 5 million years old' },
+  { url: 'https://imgix.ranker.com/user_node_img/50060/1001195182/original/australopithecus-anamensis-photo-u1?auto=format&q=60&fit=crop&fm=pjpg&dpr=2&w=500'
+   , title: 'Humans 4 million years old' },
+  { url: 'https://imgix.ranker.com/user_node_img/50060/1001195183/original/australopithecus-afarensis-photo-u2?auto=format&q=60&fit=crop&fm=pjpg&dpr=2&w=500', title: 'Human Lucy 3 million years old' },
+  { url: 'https://imgix.ranker.com/user_node_img/50060/1001195185/original/australopithecus-garhi-photo-u1?auto=format&q=60&fit=crop&fm=pjpg&dpr=2&w=500', 
+   title: 'garhi 2.5-million-year-old' },
+   { url: 'https://www.nhm.ac.uk/content/dam/nhmwww/discover/human-evolution/homo-habilis/stone-tool-homo-habilis-full-width.jpg.thumb.1160.1160.jpg'
+    , title: '2 million years ago' },
+  { url: 'https://www.nhm.ac.uk/content/dam/nhmwww/discover/human-evolution/homo-erectus/turkana-boy-full-width.jpg.thumb.1160.1160.jpg'
+   , title: '1,5 million Turkana Boy' },
+
+    { url: 'https://i.dailymail.co.uk/1s/2021/10/28/13/49745199-10140669-A_new_species_of_ancient_human_has_been_discovered_in_Africa_tha-a-37_1635424885887.jpg'
+   , title: '500,000 years' },
+    
+    { url: 'https://agenda.ge/uploads/files/news/042/post-29-1245666800.jpg'
+   , title: '500,000 years ago in Georgia' },
+    
+    
+  { url: 'https://www.nhm.ac.uk/content/dam/nhmwww/discover/human-evolution/neanderthal/neanderthal-model-on-black-hero-desktop.jpg.thumb.1920.1920.jpg'
+   , title: '400.000 Jahre' },
+    
+ { url: 'https://www.nhm.ac.uk/content/dam/nhmwww/discover/modern-humans-europe/modern-humans-europe-full-width.jpg.thumb.620.620.jpg'
+  , title: '150.000 Mann in Europa' },
+
+     { url: 'https://media.cnn.com/api/v1/images/stellar/prod/230605132420-05-homo-naledi-rising-star-cave-head.jpg?c=16x9&q=h_144,w_256,c_fill'
+  , title: '100.000 Mann' },
+
+    
+    { url: 'https://insider.si.edu/wp-content/uploads/2011/07/homo-erectus-e1310052552113.jpg'
+  , title: '40.000 Years Indonesia man' },
+ 
+    
+    { url: 'https://www.nhm.ac.uk/content/dam/nhmwww/discover/cheddar-man/cheddar-man-full-width.jpg.thumb.1920.1920.jpg'
+  , title: '10.000 Jahre englischen Mann' },
+ { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Homo_sapiens_-_Neolithic_-_reconstruction_-_MUSE.jpg/255px-Homo_sapiens_-_Neolithic_-_reconstruction_-_MUSE.jpg', title: '7.000 Jahre Frau' },    
+    
       { url: 'https://sl5.de/wp-content/uploads/2025/01/SL5net_logo_white_shadow_on_blue_w990.png', title: 'Free Courses from sl5.de for Lichess & 0 A.D. Patrons' },
       { url: 'https://seccdn.libravatar.org/avatar/098df46b093753e4a1686d74df5b876d?s=160&d=404&=1', title: 'Send me a tip! liberapay.com/seeh/ ' },
       { url: 'https://i.imgur.com/iC5KiE0.jpg', title: 'Schachspieler seeh 🨄🨈🨙🨝🨮🨲🩃🩇🩑' },
@@ -209,6 +261,11 @@ and stops - for ever - when you move mouse fast
         let baseDx = Math.random() * 2 - 1;
         let baseDy = Math.random() * 2 - 1;
 
+
+          // Randomize the direction of initial movement
+        if (Math.random() > 0.5) baseDx = -baseDx;
+        if (Math.random() > 0.5) baseDy = -baseDy;
+
       let dx = baseDx;
       let dy = baseDy;
 
@@ -231,6 +288,10 @@ and stops - for ever - when you move mouse fast
 
       const txt = document.createElement('div');
       txt.style.cssText = 'position:fixed;z-index:9999;color:white;text-align:center;font-size:16px;font-weight:bold;pointer-events:none;white-space:pre-wrap;';
+
+      // randomize the index
+        messageIndex = Math.floor(Math.random() * brbMessages.length);
+      	imageIndex = Math.floor(Math.random() * imageURLs.length);
       updateMessage(txt);
         updateImage(img, titleElement);
       messageTimer = setInterval(() => updateMessage(txt), 5000);
@@ -316,8 +377,8 @@ and stops - for ever - when you move mouse fast
     function resetTimer() {
     clearTimeout(o);
     r = false;
-      messageIndex = 0;
-      imageIndex = 0;
+      //messageIndex = 0; //no need to reset this here, its reseted in the animation
+      //imageIndex = 0;
        if (alertsEnabled)  alert("resetTimer called. r: " + r);
     o = setTimeout(function() {
       inactiveStartTime = Date.now();
