@@ -22,6 +22,9 @@ and stops - for ever - when you move mouse fast
   	const doDebug = false; // set true if we seach script errors
 
   const imageURLs = [
+
+      { url: 'https://upload.wikimedia.org/wikipedia/commons/b/b9/Adelobasileus_cromptoni.jpg'
+       , title: '225 Millionen years ago. Grand-Mum/Dad for Humans(also cats, mousese, ...) - Adelobasileus cromptoni - oldest konw Säugetier - smaler then a Mouse' },
     
     
   { url: 'https://qph.cf2.quoracdn.net/main-qimg-6e7144652bd277c4722f5e68c68f9356-lq', title: 'Humans 100 million years ago' },
@@ -33,6 +36,8 @@ and stops - for ever - when you move mouse fast
    , title: 'Humans 30 Million years ago' },
   { url: 'https://showme.missouri.edu/wp-content/uploads/2019/09/1-Rudapithecus-reconstruction-940x686.jpg'
    , title: '10 million years ago' },
+    
+    
   { url: 'https://imgix.ranker.com/user_node_img/50060/1001195177/original/sahelanthropus-tchadensis-photo-u1?auto=format&q=60&fit=crop&fm=pjpg&dpr=2&w=500'
    , title: '7 million years ago. süd Afrika' },
     { url: 'https://imgix.ranker.com/user_node_img/50060/1001195179/original/orrorin-tugenensis-photo-u2?auto=format&q=60&fit=crop&fm=pjpg&dpr=2&w=500'
