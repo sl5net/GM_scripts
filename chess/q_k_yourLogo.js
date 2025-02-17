@@ -1,14 +1,14 @@
 // ==UserScript==
-// @name     GM li KYP replaced
+// @name     GM li KYP replaced (DEBUGGED)
 // @namespace    https://lichess.org/
-// @version  1.5
-// @description  Replace your king and queen. and all pawns ...
+// @version  1.6
+// @description  Replace your king and queen, opponent's queen, and all pawns ...
 // @match   https://lichess.org/*
 // @grant    none
-// @description  To quickly test, visit: https://lichess.org/?k=https://sl5.de/wp-content/uploads/2025/01/SL5net_logo_white_shadow_on_blue_w990.png&q=https://addons.mozilla.org/user-media/addon_icons/0/748-64.png&p=kq
+// @description  To quickly test, visit: https://lichess.org/CsBBHNdb?k=https://sl5.de/wp-content/uploads/2025/01/SL5net_logo_white_shadow_on_blue_w990.png&q=https://addons.mozilla.org/user-media/addon_icons/0/748-64.png&oq=https://i.imgur.com/zFHs0of.jpg&p=kqo
 // ==/UserScript==
 
-const DEBUG = false;  // <----------------------- DEBUG FLAG
+const DEBUG = false;
 
 if (DEBUG) console.log("GM li KYP replaced script running! (DEBUGGED)");
 
@@ -21,15 +21,14 @@ function Greasemonkey_main() {
         const url = window.location.href;
         if (DEBUG) console.log("Current URL:", url);
 
-        const positiveRegex = new RegExp(`\.org\/[^@]*$`);  // <----- CORRECTED REGEX
+        const positiveRegex = new RegExp(`\.org\/[^@]*$`);
         const negativeRegex = new RegExp(`\.org\/(?:@|lern|study|coordinate|practice|inbox|team|forum|broadcast|streamer|video|player|patron|paste)[^\/]*$`);
 
         if (DEBUG) console.log("positiveRegex.test(url):", positiveRegex.test(url));
         if (DEBUG) console.log("!negativeRegex.test(url):", !negativeRegex.test(url));
 
-        if (positiveRegex.test(url) && !negativeRegex.test(url)) { // start of regex url
+        if (positiveRegex.test(url) && !negativeRegex.test(url)) {
             if (DEBUG) console.log("URL matches positive regex and doesn't match negative regex.");
-
 
             let urlParams;
             urlParams = new URLSearchParams(window.location.search);
@@ -98,7 +97,7 @@ function Greasemonkey_main() {
                 if (DEBUG) console.log("Keine gespeicherten urlParams gefunden.");
             }
 
-            let k1, q1, t1, paramValue;
+            let k1, q1, oq1, t1, paramValue; // Added oq1
             if (urlParams) {
                 if (DEBUG) console.log("Processing urlParams...");
                 urlParams.forEach((value, key) => {
@@ -125,6 +124,13 @@ function Greasemonkey_main() {
                                 if (DEBUG) console.log("    Adding 'q' to 'p' in storedSearchParams:", storedSearchParams.get('p'));
                             }
                         }
+                        if (key === 'oq') {
+                            let currentP = storedSearchParams.get('p') || '';
+                            if (!currentP.includes('o')) {
+                                storedSearchParams.set('p', currentP + 'o');  // 'o' for opponent queen
+                                if (DEBUG) console.log("    Adding 'o' to 'p' in storedSearchParams:", storedSearchParams.get('p'));
+                            }
+                        }
                     }
                 });
 
@@ -142,11 +148,10 @@ function Greasemonkey_main() {
             const b = document.querySelector(".main-board");
             if (DEBUG) console.log("main-board:", b);
 
-            let backgroundInterval; // Declare outside the if statement
+            let backgroundInterval;
 
-            if (b) { // Check if .main-board exists before using it
-
-                backgroundInterval = setInterval(function() { // Assign the interval ID
+            if (b) {
+                backgroundInterval = setInterval(function() {
 
                     if (document.querySelector('cg-board')) {
                         const b = document.querySelector(".main-board");
@@ -156,14 +161,14 @@ function Greasemonkey_main() {
                                 t.style.cssText = `position:absolute;top:0;left:0;width:100%;height:100%;background-image:url('https://sl5.de/wp-content/uploads/2025/01/SL5net_logo_white_shadow_on_blue_w990.png');background-size:cover;background-position:center;opacity:0.7;z-index:-1;border-radius:inherit;`;
                                 e.insertBefore(t, e.firstChild);
                             })(b.parentElement);
-                            clearInterval(backgroundInterval); // Correctly use the interval ID
+                            clearInterval(backgroundInterval);
                             if (DEBUG) console.log("Background code check - main board loaded and background added");
                         } else {
                             if (DEBUG) console.log("Background code check - waiting for main board");
                         }
                     } else {
                         if (DEBUG) console.log("Background code check - not a lichess board");
-                        clearInterval(backgroundInterval); // Correctly use the interval ID
+                        clearInterval(backgroundInterval);
                     }
                     if (DEBUG) console.log("Background code check - end");
                 }, 500);
@@ -175,6 +180,7 @@ function Greasemonkey_main() {
             try {
                 k1 = urlParams?.get('k');
                 q1 = urlParams?.get('q');
+                oq1 = urlParams?.get('oq'); // Get opponent queen URL
                 t1 = urlParams?.get('hi');
                 paramValue = urlParams?.get('p');
             } catch (error) {
@@ -183,23 +189,28 @@ function Greasemonkey_main() {
 
             if (DEBUG) console.log("k1 (urlParams?.get('k')):", k1);
             if (DEBUG) console.log("q1 (urlParams?.get('q')):", q1);
+            if (DEBUG) console.log("oq1 (urlParams?.get('oq')):", oq1);  // Log opponent queen URL
             if (DEBUG) console.log("t1 (urlParams?.get('hi')):", t1);
             if (DEBUG) console.log("paramValue (urlParams?.get('p')):", paramValue);
 
             const kingUrl = (k1) ? k1 : 'https://static-cdn.jtvnw.net/jtv_user_pictures/67dcc3a8-669c-4670-96d1-0ad3728c3adb-profile_image-70x70.png';
             const queenUrl = (q1) ? q1 : 'https://i.imgur.com/FhwFGbb.jpg';
+            const opponentQueenUrl = (oq1) ? oq1 : 'https://i.imgur.com/zFHs0of.jpg'; //Opponent queen url
 
             if (DEBUG) console.log("kingUrl:", kingUrl);
             if (DEBUG) console.log("queenUrl:", queenUrl);
+            if (DEBUG) console.log("opponentQueenUrl:", opponentQueenUrl);
 
             let replaceKing = true,
-                replaceQueen = true;
+                replaceQueen = true,
+                replaceOpponentQueen = false; // New variable
             if (!k1 && !paramValue.includes('k')) replaceKing = false;
             if (!q1 && !paramValue.includes('q')) replaceQueen = false;
+             if (oq1 || paramValue.includes('o')) replaceOpponentQueen = true; // Enable replacement if oq1 is present or 'o' is in paramValue
 
             if (DEBUG) console.log("replaceKing (initial):", replaceKing);
             if (DEBUG) console.log("replaceQueen (initial):", replaceQueen);
-
+            if (DEBUG) console.log("replaceOpponentQueen (initial):", replaceOpponentQueen); // Log the new variable
 
             function greetUser(userName) {
                 if (DEBUG) console.log("greetUser called with userName:", userName);
@@ -267,9 +278,12 @@ function Greasemonkey_main() {
             if (paramValue) {
                 replaceKing = paramValue.includes('k');
                 replaceQueen = paramValue.includes('q');
+                replaceOpponentQueen = paramValue.includes('o');  //Check paramValue for 'o'
             }
-            if (DEBUG) console.log("replaceKing (after paramValue check):", replaceKing);
-            if (DEBUG) console.log("replaceQueen (after paramValue check):", replaceQueen);
+
+             if (DEBUG) console.log("replaceKing (after paramValue check):", replaceKing);
+             if (DEBUG) console.log("replaceQueen (after paramValue check):", replaceQueen);
+             if (DEBUG) console.log("replaceOpponentQueen (after paramValue check):", replaceOpponentQueen);
 
             let r = true,
                 o = true;
@@ -348,19 +362,23 @@ function Greasemonkey_main() {
                         black: {
                             pawns: [],
                             king: null,
-                            queen: null
+                            queen: null,
+                            opponentQueen: null
                         },
                         white: {
                             pawns: [],
                             king: null,
-                            queen: null
+                            queen: null,
+                            opponentQueen: null
                         }
                     },
                         ki = replaceKing ? 'url(' + kingUrl + ')' : '',
-                        qu = replaceQueen ? 'url(' + queenUrl + ')' : '';
+                        qu = replaceQueen ? 'url(' + queenUrl + ')' : '',
+                        oqu = replaceOpponentQueen ? 'url(' + opponentQueenUrl + ')' : ''; // Opponent queen url
 
                     if (DEBUG) console.log("  kingUrl (in f()):", ki);
                     if (DEBUG) console.log("  queenUrl (in f()):", qu);
+                    if (DEBUG) console.log("  opponentQueenUrl (in f()):", oqu);  // Log opponent queen url
 
                     let l = document.querySelector('.puzzle__feedback.play');
                     if (l) {
@@ -371,7 +389,11 @@ function Greasemonkey_main() {
                         }
                         if (m) {
                             if (replaceKing) pcs[m].king = document.querySelector(`.${m}.king`);
-                            if (replaceQueen) pcs[m].queen = document.querySelector(`.${m}.queen`)
+                            if (replaceQueen) pcs[m].queen = document.querySelector(`.${m}.queen`);
+                             if (replaceOpponentQueen) {
+                                 const opponentColor = m === 'black' ? 'white' : 'black';
+                                 pcs[m].opponentQueen = document.querySelector(`.${opponentColor}.queen`);
+                             }
                         }
                     }
                     if (!m) {
@@ -380,7 +402,11 @@ function Greasemonkey_main() {
                             m = b.classList.contains('orientation-black') ? 'black' : 'white';
                             if (DEBUG) console.log("  Player color (determined from .cg-wrap):", m);
                             if (replaceKing) pcs[m].king = document.querySelector(`.${m}.king`);
-                            if (replaceQueen) pcs[m].queen = document.querySelector(`.${m}.queen`)
+                            if (replaceQueen) pcs[m].queen = document.querySelector(`.${m}.queen`);
+                             if (replaceOpponentQueen) {
+                                 const opponentColor = m === 'black' ? 'white' : 'black';
+                                 pcs[m].opponentQueen = document.querySelector(`.${opponentColor}.queen`);
+                             }
                         }
                     }
                     if (m) {
@@ -388,7 +414,6 @@ function Greasemonkey_main() {
                         pcs[m].pawns = document.querySelectorAll(`.${m}.pawn`);
                         pcs[om].pawns = document.querySelectorAll(`.${om}.pawn`);
 
-                        // *** RESTORED PAWN REPLACEMENT ***
                         if (DEBUG) console.log("  Calling p() for player color", m, "pawns", pcs[m].pawns);
                         const stys = ["cburnett", "merida", "alpha", "chessnut", "chess7", "reillycraig", "companion", "riohacha", "kosal", "le Zigzag", "fantasy", "spatial", "celtic", "california", "caliente", "pixel", "maestro", "fresca", "cardinal", "gioco", "tatiana", "staunty", "cooke", "monarchy", "governor", "dubrovny", "icpieces", "mpchess", "kiwen-suwi", "horsey", "anarcandy", "shapes", "letter", "disguised"];
                         if (r) {
@@ -397,7 +422,6 @@ function Greasemonkey_main() {
                         if (o) {
                             p(Array.from(pcs[om].pawns), om, stys);
                         }
-                        // *** END RESTORED PAWN REPLACEMENT ***
 
                         if (pcs[m].king) {
                             if (DEBUG) console.log("  Replacing king for color:", m, "with URL:", ki);
@@ -406,6 +430,10 @@ function Greasemonkey_main() {
                         if (pcs[m].queen) {
                             if (DEBUG) console.log("  Replacing queen for color:", m, "with URL:", qu);
                             a(pcs[m].queen, qu, m)
+                        }
+                        if (pcs[m].opponentQueen) {  //Replace opponent queen
+                            if (DEBUG) console.log("Replacing opponent queen for color", om, "with URL:", oqu);
+                            a(pcs[m].opponentQueen, oqu, om);
                         }
                     }
                 }
@@ -440,7 +468,7 @@ function Greasemonkey_main() {
                 }, 2000);
                 const an = document.querySelectorAll('#puzzle-toggle-autonext,label[for="puzzle-toggle-autonext"]');
                 an.forEach(el => el.remove())
-            } // end if (document.querySelector('cg-board'))
-        } // end of regex url
+            }
+        }
     })()
 }
