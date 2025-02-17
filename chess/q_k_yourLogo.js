@@ -8,7 +8,7 @@
 // @description  To quickly test, visit: https://lichess.org/?k=https://sl5.de/wp-content/uploads/2025/01/SL5net_logo_white_shadow_on_blue_w990.png&q=https://addons.mozilla.org/user-media/addon_icons/0/748-64.png&p=kq
 // ==/UserScript==
 
-const DEBUG = true;  // <----------------------- DEBUG FLAG
+const DEBUG = false;  // <----------------------- DEBUG FLAG
 
 if (DEBUG) console.log("GM li KYP replaced script running! (DEBUGGED)");
 
