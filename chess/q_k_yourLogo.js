@@ -20,10 +20,10 @@ function Greasemonkey_main() {
 
         const url = window.location.href;
         if (DEBUG) console.log("Current URL:", url);
-
+        
         const positiveRegex = new RegExp(`\.org\/[^@]*$`);
-        const negativeRegex = new RegExp(`\.org\/(?:@|lern|study|coordinate|practice|inbox|team|forum|broadcast|streamer|video|player|patron|paste)[^\/]*$`);
-
+        const negativeRegex = new RegExp(`\.org\/(?:@|lern|study|coordinate|practice|inbox|team|forum|broadcast|streamer|video|player|patron|paste|account|insights)[^\/]*`);
+        
         if (DEBUG) console.log("positiveRegex.test(url):", positiveRegex.test(url));
         if (DEBUG) console.log("!negativeRegex.test(url):", !negativeRegex.test(url));
 
