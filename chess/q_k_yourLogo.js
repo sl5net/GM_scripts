@@ -1,11 +1,11 @@
 // ==UserScript==
-// @name     GM li KYP replaced
+// @name     GM li KYP replaced (DEBUGGED)
 // @namespace    https://lichess.org/
 // @version  1.6
 // @description  Replace your king and queen, opponent's queen, and all pawns ...
 // @match   https://lichess.org/*
 // @grant    none
-// @description  To quickly test, visit: https://lichess.org/CsBBHNdb?k=https://sl5.de/wp-content/uploads/2025/01/SL5net_logo_white_shadow_on_blue_w990.png&q=https://addons.mozilla.org/user-media/addon_icons/0/748-64.png&oq=https://i.imgur.com/zFHs0of.jpg&p=kqo
+// @description  test 1: https://lichess.org?demo=1
 // ==/UserScript==
 
 var DEBUG = true;
@@ -20,6 +20,10 @@ function Greasemonkey_main() {
 
         const url = window.location.href;
         if (DEBUG) console.log("Current URL:", url);
+      
+				const demoUrl1 = 'https://lichess.org/CsBBHNdb?k=https://i.imgur.com/iC5KiE0.jpg&oq=https://players.chessbase.com/picture/rei00027&p=koq';
+        if(url.includes("demo=1") && !url.includes(demoUrl1))
+                window.location.href=demoUrl1;
 
         const positiveRegex = new RegExp(`\.org\/[^@]*$`);
         const negativeRegex = new RegExp(`\.org\/(?:@|lern|study|coordinate|practice|inbox|team|forum|broadcast|streamer|video|player|patron|paste|account|insights)[^\/]*`);
@@ -108,7 +112,7 @@ function Greasemonkey_main() {
 
 
 
-            let k1, q1, oq1, t1, paramValue;
+            let k1, q1, oq1, ok1, t1, paramValue;
             if (urlParams) {
                 if (DEBUG) console.log("Processing urlParams...");
                 urlParams.forEach((value, key) => {
@@ -121,7 +125,7 @@ function Greasemonkey_main() {
                         storedSearchParams.set(key, value);
                         if (DEBUG) console.log("    Setting key in storedSearchParams:", key, "Value:", value);
 
-                        if (['k', 'hi', 'q', 'oq'].includes(key)) { // Check if the key is one we want to process
+                        if (['k', 'hi', 'q', 'oq', 'ok'].includes(key)) { // Check if the key is one we want to process
                             let currentP = storedSearchParams.get('p') || '';
                             if (!currentP.includes(key)) {
                                 storedSearchParams.set('p', currentP + key);
@@ -179,33 +183,28 @@ function Greasemonkey_main() {
             try {
                 k1 = urlParams?.get('k');
                 q1 = urlParams?.get('q');
-                oq1 = urlParams?.get('oq'); // Get opponent queen URL
+                oq1 = urlParams?.get('oq');
+                ok1 = urlParams?.get('ok');
                 t1 = urlParams?.get('hi');
                 paramValue = urlParams?.get('p');
             } catch (error) {
                 console.log("Error 4:", error);
             }
 
-            if (DEBUG) console.log("k1 (urlParams?.get('k')):", k1);
-            if (DEBUG) console.log("q1 (urlParams?.get('q')):", q1);
-            if (DEBUG) console.log("oq1 (urlParams?.get('oq')):", oq1);  // Log opponent queen URL
-            if (DEBUG) console.log("t1 (urlParams?.get('hi')):", t1);
-            if (DEBUG) console.log("paramValue (urlParams?.get('p')):", paramValue);
-
             const kingUrl = (k1) ? k1 : 'https://static-cdn.jtvnw.net/jtv_user_pictures/67dcc3a8-669c-4670-96d1-0ad3728c3adb-profile_image-70x70.png';
             const queenUrl = (q1) ? q1 : 'https://i.imgur.com/FhwFGbb.jpg';
-            const opponentQueenUrl = (oq1) ? oq1 : 'https://i.imgur.com/zFHs0of.jpg'; //Opponent queen url
+            const opponentQueenUrl = (oq1) ? oq1 : 'https://i.imgur.com/zFHs0of.jpg';
 
-            if (DEBUG) console.log("kingUrl:", kingUrl);
-            if (DEBUG) console.log("queenUrl:", queenUrl);
-            if (DEBUG) console.log("opponentQueenUrl:", opponentQueenUrl);
+            const opponentKingUrl = (ok1) ? ok1 : '';
 
             let replaceKing = true,
                 replaceQueen = true,
-                replaceOpponentQueen = false; // New variable
+                replaceOpponentQueen = false,
+                replaceOpponentKing = false;
             if (!k1 && !paramValue.includes('k')) replaceKing = false;
             if (!q1 && !paramValue.includes('q')) replaceQueen = false;
-             if (oq1 || paramValue.includes('o')) replaceOpponentQueen = true; // Enable replacement if oq1 is present or 'o' is in paramValue
+            if (!oq1 && !paramValue.includes('oq')) replaceOpponentQueen = true;
+            if (!ok1 && !paramValue.includes('ok')) replaceOpponentKing = true;
 
             if (DEBUG) console.log("replaceKing (initial):", replaceKing);
             if (DEBUG) console.log("replaceQueen (initial):", replaceQueen);
@@ -291,7 +290,8 @@ function Greasemonkey_main() {
             if (paramValue) {
                 replaceKing = paramValue.includes('k');
                 replaceQueen = paramValue.includes('q');
-                replaceOpponentQueen = paramValue.includes('o');  //Check paramValue for 'o'
+                replaceOpponentQueen = paramValue.includes('oq');  //Check paramValue for 'o'
+                replaceOpponentKing = paramValue.includes('ok');  //Check paramValue for 'o'
             }
 
              if (DEBUG) console.log("replaceKing (after paramValue check):", replaceKing);
@@ -374,23 +374,22 @@ function Greasemonkey_main() {
                             pawns: [],
                             king: null,
                             queen: null,
-                            opponentQueen: null
+                            opponentQueen: null,
+                            opponentKing: null
                         },
                         white: {
                             pawns: [],
                             king: null,
                             queen: null,
-                            opponentQueen: null
+                            opponentQueen: null,
+                            opponentKing: null
                         }
                     },
-                        ki = replaceKing ? 'url(' + kingUrl + ')' : '',
-                        qu = replaceQueen ? 'url(' + queenUrl + ')' : '',
-                        oqu = replaceOpponentQueen ? 'url(' + opponentQueenUrl + ')' : ''; // Opponent queen url
-
-                    if (DEBUG) console.log("  kingUrl (in f()):", ki);
-                    if (DEBUG) console.log("  queenUrl (in f()):", qu);
-                    if (DEBUG) console.log("  opponentQueenUrl (in f()):", oqu);  // Log opponent queen url
-
+                        ki = replaceKing && kingUrl ? 'url(' + kingUrl + ')' : '',
+                        qu = replaceQueen && queenUrl ? 'url(' + queenUrl + ')' : '',
+                        oqu = replaceOpponentQueen && opponentQueenUrl ? 'url(' + opponentQueenUrl + ')' : '';
+                        oku = replaceOpponentKing && opponentKingUrl ? 'url(' + opponentKingUrl + ')' : '';
+                        
                     let l = document.querySelector('.puzzle__feedback.play');
                     if (l) {
                         let i = l.querySelector('.instruction em');
@@ -401,10 +400,13 @@ function Greasemonkey_main() {
                         if (m) {
                             if (replaceKing) pcs[m].king = document.querySelector(`.${m}.king`);
                             if (replaceQueen) pcs[m].queen = document.querySelector(`.${m}.queen`);
-                             if (replaceOpponentQueen) {
-                                 const opponentColor = m === 'black' ? 'white' : 'black';
-                                 pcs[m].opponentQueen = document.querySelector(`.${opponentColor}.queen`);
-                             }
+                            const opponentColor = m === 'black' ? 'white' : 'black';
+                            if (replaceOpponentQueen) {
+                                pcs[m].opponentQueen = document.querySelector(`.${opponentColor}.queen`);
+                            }
+                            if (replaceOpponentKing) {
+                                pcs[m].opponentKing = document.querySelector(`.${opponentColor}.king`);
+                            }
                         }
                     }
                     if (!m) {
@@ -414,9 +416,12 @@ function Greasemonkey_main() {
                             if (DEBUG) console.log("  Player color (determined from .cg-wrap):", m);
                             if (replaceKing) pcs[m].king = document.querySelector(`.${m}.king`);
                             if (replaceQueen) pcs[m].queen = document.querySelector(`.${m}.queen`);
+                            const opponentColor = m === 'black' ? 'white' : 'black';
                              if (replaceOpponentQueen) {
-                                 const opponentColor = m === 'black' ? 'white' : 'black';
                                  pcs[m].opponentQueen = document.querySelector(`.${opponentColor}.queen`);
+                             }
+                             if (replaceOpponentKing) {
+                                 pcs[m].opponentKing = document.querySelector(`.${opponentColor}.king`);
                              }
                         }
                     }
@@ -450,9 +455,12 @@ function Greasemonkey_main() {
                             if (DEBUG) console.log("  Replacing queen for color:", m, "with URL:", qu);
                             a(pcs[m].queen, qu, m)
                         }
-                        if (pcs[m].opponentQueen) {  //Replace opponent queen
+                        if (pcs[m].opponentQueen) {
                             if (DEBUG) console.log("Replacing opponent queen for color", om, "with URL:", oqu);
                             a(pcs[m].opponentQueen, oqu, om);
+                        }
+                        if (oku && pcs[m].opponentKing) {
+                            a(pcs[m].opponentKing, oku, om);
                         }
                     }
                 }
