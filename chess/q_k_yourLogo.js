@@ -8,7 +8,7 @@
 // @description  To quickly test, visit: https://lichess.org/CsBBHNdb?k=https://sl5.de/wp-content/uploads/2025/01/SL5net_logo_white_shadow_on_blue_w990.png&q=https://addons.mozilla.org/user-media/addon_icons/0/748-64.png&oq=https://i.imgur.com/zFHs0of.jpg&p=kqo
 // ==/UserScript==
 
-const DEBUG = false;
+var DEBUG = true;
 
 if (DEBUG) console.log("GM li KYP replaced script running! (DEBUGGED)");
 
@@ -20,15 +20,23 @@ function Greasemonkey_main() {
 
         const url = window.location.href;
         if (DEBUG) console.log("Current URL:", url);
-        
+
         const positiveRegex = new RegExp(`\.org\/[^@]*$`);
         const negativeRegex = new RegExp(`\.org\/(?:@|lern|study|coordinate|practice|inbox|team|forum|broadcast|streamer|video|player|patron|paste|account|insights)[^\/]*`);
-        
+
         if (DEBUG) console.log("positiveRegex.test(url):", positiveRegex.test(url));
         if (DEBUG) console.log("!negativeRegex.test(url):", !negativeRegex.test(url));
 
         if (positiveRegex.test(url) && !negativeRegex.test(url)) {
             if (DEBUG) console.log("URL matches positive regex and doesn't match negative regex.");
+
+
+            const url = window.location.href;
+            const urlTestGreet = 'https://lichess.org/CsBBHNdb?test=greet';
+            if(url.includes("test=greet"))
+                if(!url.includes(urlTestGreet))
+                    window.location.href = urlTestGreet;
+
 
             let urlParams;
             urlParams = new URLSearchParams(window.location.search);
@@ -213,9 +221,18 @@ function Greasemonkey_main() {
             if (DEBUG) console.log("replaceOpponentQueen (initial):", replaceOpponentQueen); // Log the new variable
 
             function greetUser(userName) {
-                if (DEBUG) console.log("greetUser called with userName:", userName);
+                if (DEBUG){
+                 console.log("greetUser called with userName:", userName);
+                }
                 if (!userName) {
-                    console.log(':( 250114173916');
+                    console.log(':( !userName ');
+                    console.log(':( !userName ');
+                    console.log(':( !userName ');
+                    console.log(':( !userName ');
+                    console.log(':( !userName ');
+                    console.log(':( !userName ');
+                    console.log(':( !userName ');
+                    console.log(':( !userName ');
                     return false;
                 }
                 let ty = (t1) ? t1 : 'Hi ' + userName + ', i am IT-Nerd from Universe arrived World (DE-T%C3%BCbingen ' + new Date().toLocaleString('de-DE', {
@@ -262,7 +279,12 @@ function Greasemonkey_main() {
                                 key: 'Enter',
                                 code: 'Enter'
                             });
-                            inputField.dispatchEvent(enterKeyEvent);
+
+                            // https://lichess.org/CsBBHNdb?test=greet
+                            const url = window.location.href;
+                            if(!url.includes("test=greet")){
+                                inputField.dispatchEvent(enterKeyEvent);
+                            }
                             if (DEBUG) console.log("Enter key dispatched");
                         }
                     }
@@ -315,8 +337,6 @@ function Greasemonkey_main() {
             } else if (document.querySelector('cg-board')) {
                 if (DEBUG) console.log("Running on lichess cg-board");
 
-                let opponentName;
-                const getOpponentName = m => document.querySelector(`.game__meta__players .player${m === 'black' ? ':not(.black)' : ':not(.white)'} a.user-link`).textContent.trim().split(' ')[0];
 
                 function a(e, t, c) {
                     if (DEBUG) console.log("a() called with:", e, t, c);
@@ -410,6 +430,14 @@ function Greasemonkey_main() {
                         }
                     }
                     if (m) {
+
+
+                        let opponentName;
+                        const getOpponentName = m => document.querySelector(`.game__meta__players .player${m === 'black' ? ':not(.black)' : ':not(.white)'} a.user-link`).textContent.trim().split(' ')[0];
+                        opponentName = getOpponentName(m);
+                        greetUser(opponentName);
+
+
                         const om = m === 'black' ? 'white' : 'black';
                         pcs[m].pawns = document.querySelectorAll(`.${m}.pawn`);
                         pcs[om].pawns = document.querySelectorAll(`.${om}.pawn`);
