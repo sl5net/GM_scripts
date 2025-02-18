@@ -1,11 +1,11 @@
 // ==UserScript==
-// @name     GM li KYP replaced (DEBUGGED)
+// @name     GM li KYP replaced
 // @namespace    https://lichess.org/
-// @version  1.6
-// @description  Replace your king and queen, opponent's queen, and all pawns ...
+// @version  1.7
+// @description  Replace your king and queen, opponent's queen/king, and all pawns ...
 // @match   https://lichess.org/*
 // @grant    none
-// @description  test 1: https://lichess.org?demo=1
+// @description  test 1: https://lichess.org?demo=1 / 2 / ...
 // ==/UserScript==
 
 var DEBUG = true;
@@ -21,9 +21,14 @@ function Greasemonkey_main() {
         const url = window.location.href;
         if (DEBUG) console.log("Current URL:", url);
       
-				const demoUrl1 = 'https://lichess.org/CsBBHNdb?k=https://i.imgur.com/iC5KiE0.jpg&oq=https://players.chessbase.com/picture/rei00027&p=koq';
+        const demoUrl1 = 'https://lichess.org/CsBBHNdb?k=https://i.imgur.com/iC5KiE0.jpg&oq=https://players.chessbase.com/picture/rei00027&p=koq';
+        
+        const demoUrl2 = demoUrl1 + 'ok&ok=' + 'https://static-cdn.jtvnw.net/jtv_user_pictures/40c1cb9b-d351-45f1-a092-24e6da4758b9-profile_image-70x70.png';
+
         if(url.includes("demo=1") && !url.includes(demoUrl1))
                 window.location.href=demoUrl1;
+        if(url.includes("demo=2") && !url.includes(demoUrl2))
+                window.location.href=demoUrl2;
 
         const positiveRegex = new RegExp(`\.org\/[^@]*$`);
         const negativeRegex = new RegExp(`\.org\/(?:@|lern|study|coordinate|practice|inbox|team|forum|broadcast|streamer|video|player|patron|paste|account|insights)[^\/]*`);
