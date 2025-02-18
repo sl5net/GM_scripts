@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name     GM li KYP replaced (DEBUGGED)
+// @name     GM li KYP replaced
 // @namespace    https://lichess.org/
 // @version  1.6
 // @description  Replace your king and queen, opponent's queen, and all pawns ...
@@ -105,7 +105,10 @@ function Greasemonkey_main() {
                 if (DEBUG) console.log("Keine gespeicherten urlParams gefunden.");
             }
 
-            let k1, q1, oq1, t1, paramValue; // Added oq1
+
+
+
+            let k1, q1, oq1, t1, paramValue;
             if (urlParams) {
                 if (DEBUG) console.log("Processing urlParams...");
                 urlParams.forEach((value, key) => {
@@ -118,29 +121,16 @@ function Greasemonkey_main() {
                         storedSearchParams.set(key, value);
                         if (DEBUG) console.log("    Setting key in storedSearchParams:", key, "Value:", value);
 
-                        if (key === 'k') {
+                        if (['k', 'hi', 'q', 'oq'].includes(key)) { // Check if the key is one we want to process
                             let currentP = storedSearchParams.get('p') || '';
-                            if (!currentP.includes('k')) {
-                                storedSearchParams.set('p', currentP + 'k');
-                                if (DEBUG) console.log("    Adding 'k' to 'p' in storedSearchParams:", storedSearchParams.get('p'));
-                            }
-                        }
-                        if (key === 'q') {
-                            let currentP = storedSearchParams.get('p') || '';
-                            if (!currentP.includes('q')) {
-                                storedSearchParams.set('p', currentP + 'q');
-                                if (DEBUG) console.log("    Adding 'q' to 'p' in storedSearchParams:", storedSearchParams.get('p'));
-                            }
-                        }
-                        if (key === 'oq') {
-                            let currentP = storedSearchParams.get('p') || '';
-                            if (!currentP.includes('o')) {
-                                storedSearchParams.set('p', currentP + 'o');  // 'o' for opponent queen
-                                if (DEBUG) console.log("    Adding 'o' to 'p' in storedSearchParams:", storedSearchParams.get('p'));
+                            if (!currentP.includes(key)) {
+                                storedSearchParams.set('p', currentP + key);
+                                if (DEBUG) console.log("    Adding '" + key + "' to 'p' in storedSearchParams:", storedSearchParams.get('p'));
                             }
                         }
                     }
                 });
+
 
                 storedSearchParams.forEach((value, key) => {
                     if (!urlParams.has(key)) {
@@ -152,6 +142,7 @@ function Greasemonkey_main() {
                 ls.setItem(KEY_URL_PARAMS, storedSearchParams.toString());
                 if (DEBUG) console.log("    StoredSearchParams saved to localStorage:", storedSearchParams.toString());
             }
+
 
             const b = document.querySelector(".main-board");
             if (DEBUG) console.log("main-board:", b);
