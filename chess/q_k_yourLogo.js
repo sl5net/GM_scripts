@@ -27,7 +27,6 @@
 // @description  3. Customize the piece images and greeting by adding URL parameters to the Lichess page URL.  For example:
 // @description  `https://lichess.org/?k=king_image_url&q=queen_image_url&hi=Hello`
 // @description  4. The settings will be saved and applied automatically on subsequent page loads.
-// @description  https://gist.github.com/sl5net/b7686fda25213ce8f1c5c43ae2690e8b
 // ==/UserScript==
 var DEBUG = true;
 
@@ -45,11 +44,17 @@ function Greasemonkey_main() {
         const demoUrl1 = 'https://lichess.org/CsBBHNdb?k=https://i.imgur.com/iC5KiE0.jpg&oq=https://players.chessbase.com/picture/rei00027&p=koq';
         
         const demoUrl2 = demoUrl1 + 'ok&ok=' + 'https://static-cdn.jtvnw.net/jtv_user_pictures/40c1cb9b-d351-45f1-a092-24e6da4758b9-profile_image-70x70.png';
+      
+        const demoUrl3 = 'https://lichess.org/CsBBHNdb' +  '?k=' 
+        + 'https://static-cdn.jtvnw.net/jtv_user_pictures/3a67aaa5-a1eb-4375-b2b4-332a7a6b4b05-profile_image-70x70.png&q=https://duckduckgo.com/i/7c7aeb6b.jpg';
+           
 
         if(url.includes("demo=1") && !url.includes(demoUrl1))
                 window.location.href=demoUrl1;
         if(url.includes("demo=2") && !url.includes(demoUrl2))
                 window.location.href=demoUrl2;
+        if(url.includes("demo=3") && !url.includes(demoUrl3))
+                window.location.href=demoUrl3;
 
         const positiveRegex = new RegExp(`\.org\/[^@]*$`);
         const negativeRegex = new RegExp(`\.org\/(?:@|lern|study|coordinate|practice|inbox|team|forum|broadcast|streamer|video|player|patron|paste|account|insights)[^\/]*`);
