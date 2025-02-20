@@ -28,7 +28,7 @@
 // @description  `https://lichess.org/?k=king_image_url&q=queen_image_url&hi=Hello`
 // @description  4. The settings will be saved and applied automatically on subsequent page loads.
 // ==/UserScript==
-var DEBUG = true;
+var DEBUG = false;
 
 if (DEBUG) console.log("GM li KYP replaced script running!");
 
@@ -41,11 +41,14 @@ function Greasemonkey_main() {
         const url = window.location.href;
         if (DEBUG) console.log("Current URL:", url);
       
-        const demoUrl1 = 'https://lichess.org/CsBBHNdb?k=https://i.imgur.com/iC5KiE0.jpg&oq=https://players.chessbase.com/picture/rei00027&p=koq';
+      
+      	const SQ4ATcNB = 'https://lichess.org/SQ4ATcNB';
+      
+        const demoUrl1 = SQ4ATcNB + '?k=https://i.imgur.com/iC5KiE0.jpg&oq=https://players.chessbase.com/picture/rei00027&p=koq';
         
         const demoUrl2 = demoUrl1 + 'ok&ok=' + 'https://static-cdn.jtvnw.net/jtv_user_pictures/40c1cb9b-d351-45f1-a092-24e6da4758b9-profile_image-70x70.png';
       
-        const demoUrl3 = 'https://lichess.org/CsBBHNdb' +  '?k=' 
+        const demoUrl3 = SQ4ATcNB +  '?k=' 
         + 'https://static-cdn.jtvnw.net/jtv_user_pictures/3a67aaa5-a1eb-4375-b2b4-332a7a6b4b05-profile_image-70x70.png&q=https://duckduckgo.com/i/7c7aeb6b.jpg';
            
 
