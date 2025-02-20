@@ -28,7 +28,7 @@
 // @description  `https://lichess.org/?k=king_image_url&q=queen_image_url&hi=Hello`
 // @description  4. The settings will be saved and applied automatically on subsequent page loads.
 // ==/UserScript==
-var DEBUG = false;
+var DEBUG = true;
 
 if (DEBUG) console.log("GM li KYP replaced script running!");
 
@@ -225,7 +225,7 @@ if (urlParams.has('showGreet')) {
                         if (b) {
                             (e => {
                                 const t = document.createElement("div");
-                                t.style.cssText = `position:absolute;top:0;left:0;width:100%;height:100%;background-image:url('https://sl5.de/wp-content/uploads/2025/01/SL5net_logo_white_shadow_on_blue_w990.png');background-size:cover;background-position:center;opacity:0.7;z-index:-1;border-radius:inherit;`;
+                                t.style.cssText = `position:absolute;top:0;left:0;width:100%;height:100%;background-image:url('https://sl5.de/wp-content/uploads/2025/01/SL5net_logo_white_shadow_on_blue_w990.png');background-size:cover;background-position:center;opacity:0.3;z-index:-1;border-radius:inherit;`;
                                 e.insertBefore(t, e.firstChild);
                             })(b.parentElement);
                             clearInterval(backgroundInterval);
@@ -543,13 +543,14 @@ if (urlParams.has('showGreet')) {
                     }
                 }
 
-                function b() {
-                  const g = document.querySelector('.game__meta__infos');
-                  const p = document.querySelector('.puzzle__side__user__rating');
-                  if ((p?.querySelector('strong')) || (g?.textContent.includes('Rated') || g?.textContent.includes('Gewertet'))) {
-                    (p ? document.querySelector('.puzzle__side__user') : g).style.backgroundColor = 'red';
-                  }
-                }
+              
+function b() {
+  const g = document.querySelector('.game__meta__infos');
+  const p = document.querySelector('.puzzle__side__user__rating');
+  if ((p?.querySelector('strong')) || (g?.textContent.includes('Rated') || g?.textContent.includes('Gewertet'))) {
+    (p ? document.querySelector('.puzzle__side__user') : g).style.backgroundColor = 'darkred';
+  }
+}
 
                 function h() {
                     const l = document.querySelectorAll('.last-move');
