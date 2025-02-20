@@ -544,15 +544,11 @@ if (urlParams.has('showGreet')) {
                 }
 
                 function b() {
-                    const p = document.querySelector('.puzzle__side__user__rating');
-                    const g = document.querySelector('.game__meta__infos');
-                    if ((p && p.querySelector('strong')) || (g && g.querySelector('.setup') && g.querySelector('.setup').textContent.includes('Rated'))) {
-                        if (p && p.querySelector('strong')) {
-                            document.querySelector('.puzzle__side__user').style.backgroundColor = 'red';
-                        } else if (g) {
-                            g.style.backgroundColor = 'red';
-                        }
-                    }
+                  const g = document.querySelector('.game__meta__infos');
+                  const p = document.querySelector('.puzzle__side__user__rating');
+                  if ((p?.querySelector('strong')) || (g?.textContent.includes('Rated') || g?.textContent.includes('Gewertet'))) {
+                    (p ? document.querySelector('.puzzle__side__user') : g).style.backgroundColor = 'red';
+                  }
                 }
 
                 function h() {
