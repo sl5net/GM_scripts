@@ -117,7 +117,7 @@ if (urlParams.has('showGreet')) {
                 board = document.querySelector("cg-board") || document.getElementById('board-layout-chessboard');
                 if (DEBUG) console.log("board (querySelector):", board);
 
-                if (!board) {
+                if (false && !board) {
                     const uGo = urlParams.get('u');
                     if (DEBUG) console.log("uGo (urlParams.get('u')):", uGo);
                     if (DEBUG) console.log("Redirecting to:", uGo || urlTrain);
