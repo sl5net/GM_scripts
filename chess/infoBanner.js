@@ -30,7 +30,7 @@
   `;
 
   const topLeftStyle = `${baseStyle}
-    top: 10px;
+    top: 50px;
     left: 10px;
   `;
 
