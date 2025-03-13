@@ -1,0 +1,51 @@
+// ==UserScript==
+// @name         GM nebenan.de Remove Advertisements
+// @version      2.3
+// @match        https://nebenan.de/*
+// @match        https://*.nebenan.de/*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    // Function to aggressively remove ads using a direct approach
+    function removeAds() {
+        const feedItems = document.querySelectorAll('.c-feed_list-item');  // Or however the list items are selected
+
+        feedItems.forEach(item => {
+            if (item.textContent.includes('Anzeige')) {  // or some other key indicator of ads
+                console.log("Found potential ad item:", item);
+                item.remove(); // Directly remove the element
+            }
+        });
+
+        console.log("Aggressive advertisement elements removal process completed.");
+    }
+
+    // MutationObserver to handle dynamically loaded content
+    const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+            if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+                mutation.addedNodes.forEach(node => {
+                    if (node.nodeType === Node.ELEMENT_NODE && node.textContent.includes('Anzeige')) {
+                        console.log("Dynamically loaded advertisement detected.  Removing.");
+                        removeAds();
+                    }
+                });
+            }
+        });
+    });
+
+    // Configuration of the observer:
+    const config = { childList: true, subtree: true };
+
+    // Start observing the document body for configured mutations
+    observer.observe(document.body, config);
+
+    // Delay before applying ads removal, helps in cases the ads come from JS
+    setTimeout(function() {
+        console.log("Executing delayed advertisement removal.");
+        removeAds();
+    }, 3000);
+})();
