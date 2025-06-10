@@ -1,9 +1,10 @@
 // ==UserScript==
-// @name         GM li KYP replaced
+// @name         GM li KYP replaced. READ last move
 // @namespace    https://lichess.org/
-// @version      1.8
+// @version      1.9
 // @description  Replace your king and queen, opponent's queen/king, and all pawns with custom images. Also provides a greeting feature.
 // @match        https://lichess.org/*
+// @match        https://chessitout.com/*
 // @grant        none
 
 // @description  **Functionality:**
@@ -44,12 +45,19 @@ function Greasemonkey_main() {
       
       	const SQ4ATcNB = 'https://lichess.org/SQ4ATcNB';
       
-        const demoUrl1 = SQ4ATcNB + '?k=https://i.imgur.com/iC5KiE0.jpg&oq=https://players.chessbase.com/picture/rei00027&p=koq';
+        // const kWFM_Katharina_Reinecke  = 'https://players.chessbase.com/picture/rei00027';
+      
+				const SL5Queen = 'https://sl5.de/wp-content/uploads/2025/06/SL5-Queen-wordpress-extra-2025-0610-0623-2.svg';
+      
+      	const SL5ceo = 'https://static-cdn.jtvnw.net/jtv_user_pictures/67dcc3a8-669c-4670-96d1-0ad3728c3adb-profile_image-70x70.png';
+
+      
+        const demoUrl1 = SQ4ATcNB + '?k=https://i.imgur.com/iC5KiE0.jpg&oq=' + SL5Queen + '&p=koq';
         
-        const demoUrl2 = demoUrl1 + 'ok&ok=' + 'https://static-cdn.jtvnw.net/jtv_user_pictures/40c1cb9b-d351-45f1-a092-24e6da4758b9-profile_image-70x70.png';
+        const demoUrl2 = demoUrl1 + '&ok=' + 'https://static-cdn.jtvnw.net/jtv_user_pictures/40c1cb9b-d351-45f1-a092-24e6da4758b9-profile_image-70x70.png';
       
         const demoUrl3 = SQ4ATcNB +  '?k=' 
-        + 'https://static-cdn.jtvnw.net/jtv_user_pictures/3a67aaa5-a1eb-4375-b2b4-332a7a6b4b05-profile_image-70x70.png&q=https://duckduckgo.com/i/7c7aeb6b.jpg';
+        + 'https://static-cdn.jtvnw.net/jtv_user_pictures/3a67aaa5-a1eb-4375-b2b4-332a7a6b4b05-profile_image-70x70.png&q=' + SL5Queen ;
            
 
         if(url.includes("demo=1") && !url.includes(demoUrl1))
@@ -255,8 +263,9 @@ if (urlParams.has('showGreet')) {
                 console.log("Error 4:", error);
             }
 
-            const kingUrl = (k1) ? k1 : 'https://static-cdn.jtvnw.net/jtv_user_pictures/67dcc3a8-669c-4670-96d1-0ad3728c3adb-profile_image-70x70.png';
-            const queenUrl = (q1) ? q1 : 'https://i.imgur.com/FhwFGbb.jpg';
+            const kingUrl = (k1) ? k1 : SL5ceo;
+            // const queenUrl = (q1) ? q1 : 'https://i.imgur.com/FhwFGbb.jpg';
+            const queenUrl = (q1) ? q1 : SL5Queen;
             const opponentQueenUrl = (oq1) ? oq1 : 'https://i.imgur.com/zFHs0of.jpg';
 
             const opponentKingUrl = (ok1) ? ok1 : '';
@@ -292,7 +301,7 @@ if (urlParams.has('showGreet')) {
                 
                 let u = userName;
                 
-                let ty = (t1) ? t1 : 'Hi ' + userName + ', i am IT-Nerd from Universe arrived World (DE-T%C3%BCbingen ' + new Date().toLocaleString('de-DE', {
+                let ty = (t1) ? t1 : 'Hi ' + userName + ', i am IT-Nerd from Universe arrived World (DE-Tubingen ' + new Date().toLocaleString('de-DE', {
                     month: 'long',
                     year: 'numeric'
                 }) + ' ) . How to make friends/projects on earth? Have fun.';
@@ -556,7 +565,7 @@ function b() {
                     const l = document.querySelectorAll('.last-move');
                     l.forEach(el => {
                         if (el && !el.style.cssText.includes('box-shadow')) {
-                            el.style.cssText += 'box-shadow:0 0 15px rgba(0,0,0,0.7);outline:5px solid black;background-image:linear-gradient(to bottom,rgba(255,255,0,0.5),rgba(255,255,0,0.2))'
+                            el.style.cssText += 'box-shadow:0 0 15px rgba(0,0,0,0.7);outline:20px solid red;background-image:linear-gradient(to bottom,rgba(255,255,0,0.5),rgba(255,255,0,0.2))'
                         }
                     })
                 }
