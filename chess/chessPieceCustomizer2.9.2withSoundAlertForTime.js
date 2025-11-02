@@ -48,8 +48,12 @@
     const DEFAULT_KNIGHT_URL = 'https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg';
 
     // --- Eigene Bauern-Bilder ---
-    const DEFAULT_black_pawn_URL = 'https://lichess1.org/assets/hashed/bP.ad1b22a2.svg';
-    const DEFAULT_white_pawn = 'https://lichess1.org/assets/hashed/wP.57e8a40d.svg';
+    // const DEFAULT_black_pawn_URL = 'https://lichess1.org/assets/hashed/bP.ad1b22a2.svg';
+    // const DEFAULT_white_pawn = 'https://lichess1.org/assets/hashed/wP.57e8a40d.svg';
+    
+    // schilkröte
+    const DEFAULT_black_pawn_URL = 'https://svgsilh.com/svg/294522.svg';
+    const DEFAULT_white_pawn = 'https://svgsilh.com/svg/294522-ff9800.svg';
 
     // --- Demo URLs (Path is ignored, only params are used) ---
     const DEMO_BASE_URL = 'https://lichess.org/anygame';
