@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Lichess Piece Customizer 2.9.1 (Features Restored & Custom Pawns)
+// @name         Lichess Piece Customizer 2.9.2 (Features Restored & Custom Pawns)
 // @namespace    https://lichess.org/
-// @version      2.9.1
-// @description  Replaces chess pieces with custom images, including color-specific pawns for the player. Restored greeting and last-move-highlighting features.
+// @version      2.9.2
+// @description  Replaces chess pieces with custom images, including color-specific pawns for the player. Restored greeting and last-move-highlighting features. Now includes time alerts at 40, 30, 20, and 10 seconds remaining.
 // @match        https://lichess.org/*
 // @match        https://chessitout.com/*
 // @grant        none
@@ -15,6 +15,7 @@
 // @description  - Restored: Highlights the squares of the last move in red.
 // @description  - Supports all major pieces for both player and opponent.
 // @description  - Robustly handles Lichess's performance optimizations (DOM recycling).
+// @description  - NEW: Sends sound and visual alerts when the player's clock hits 40, 30, 20, and 10 seconds.
 
 // @description  **URL Parameters:**
 // @description  - `k`, `q`, `r`, `b`, `n`: URLs for your king, queen, rook, bishop, knight.
@@ -34,12 +35,15 @@
     const STORAGE_KEY_URL_PARAMS = 'lichess_piece_customizer_params';
     const STORAGE_KEY_GREETED_USERS_LEGACY = '011417greetedUsers';
 
-    // --- Standard-Bilder ---
+    // --- Time Alert Configuration ---
+    const TIME_THRESHOLDS = [40, 30, 20, 10];
+    let alertedTimes = {}; // Stores which thresholds have been hit in the current game
+
+    // --- Standard-Bilder (rest of configuration omitted for brevity, unchanged) ---
     const DEFAULT_PLAYER_KING_URL = 'https://static-cdn.jtvnw.net/jtv_user_pictures/67dcc3a8-669c-4670-96d1-0ad3728c3adb-profile_image-70x70.png';
     const DEFAULT_PLAYER_QUEEN_URL = 'https://sl5.de/wp-content/uploads/2025/06/SL5-Queen-wordpress-extra-2025-0610-0623-2.svg';
     const DEFAULT_OPPONENT_QUEEN_URL = 'https://svgsilh.com/svg/1598266.svg';
     const DEFAULT_ROOK_URL = 'https://as2.ftcdn.net/v2/jpg/02/05/85/31/1000_F_205853174_6A2n536iT6H23n5j2FmhD2Q5iSjKkYpU.jpg';
-    const DEFAULT_BISHOP_URL = 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg';
     const DEFAULT_BISHOP_URL = 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg';
     const DEFAULT_KNIGHT_URL = 'https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg';
 
@@ -93,6 +97,106 @@
         observeBoardAndApplyChanges(pieceConfig, greetingMessage);
     }
 
+    // --- TIME ALERT FUNCTIONS START HERE ---
+
+    /**
+     * Parses the time from the Lichess clock element into total seconds.
+     * The Lichess structure uses <sep> and <tenths> which complicates standard text parsing.
+     * @param {HTMLElement} timeElement The div.time element inside rclock.
+     * @returns {number|null} Total seconds remaining, or null if parsing fails.
+     */
+    function parseTime(timeElement) {
+        if (!timeElement) return null;
+
+        // Strip non-numeric and non-colon characters, then split by colon.
+        const cleanedText = timeElement.textContent.replace(/\s+/g, '');
+        const parts = cleanedText.split(':');
+
+        if (parts.length < 2) return null;
+
+        const minutes = parseInt(parts[0], 10);
+        // Clean the seconds part to handle optional tenths/dots
+        let secondsString = parts[1].replace(/[^0-9.]/g, ''); 
+        let seconds = parseFloat(secondsString); 
+
+        if (isNaN(minutes) || isNaN(seconds)) return null;
+
+        return (minutes * 60) + seconds;
+    }
+
+    /**
+     * Plays a short, noticeable beep sound.
+     */
+    function playAlertSound() {
+        try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(600, audioContext.currentTime); // Higher frequency beep
+            gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.start();
+            setTimeout(() => {
+                // Smooth fade out
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.3);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            }, 50); // Beep duration
+        } catch (e) {
+            if (DEBUG) console.warn("Audio Context not available or failed to play sound:", e);
+        }
+    }
+
+    /**
+     * Checks the player's remaining time against defined thresholds and triggers alerts.
+     */
+    function checkTimeAlerts() {
+        // The player's clock is almost always the rclock-bottom element on Lichess game pages.
+        const playerClockTimeDiv = document.querySelector('.rclock-bottom .time');
+        
+        if (!playerClockTimeDiv) return;
+
+        const totalSeconds = parseTime(playerClockTimeDiv);
+        if (totalSeconds === null) return;
+        
+        const clockContainer = playerClockTimeDiv.parentElement;
+
+        // Reset alerts if the time significantly increases (e.g., new game or time added)
+        if (totalSeconds > TIME_THRESHOLDS[0] + 5 && Object.keys(alertedTimes).length > 0) {
+            if (DEBUG) console.log("Time reset detected. Resetting alerts.");
+            alertedTimes = {};
+            clockContainer.style.backgroundColor = ''; // Clear residual background
+        }
+
+        // Check against thresholds (40, 30, 20, 10)
+        for (const threshold of TIME_THRESHOLDS) {
+            // Check if time is <= threshold AND we haven't alerted for this threshold yet
+            if (totalSeconds <= threshold && !alertedTimes[threshold]) {
+                if (DEBUG) console.log(`[Timer Alert] Time reached ${threshold} seconds.`);
+                
+                playAlertSound();
+                alertedTimes[threshold] = true;
+
+                // Visual Feedback: Flash the clock background
+                clockContainer.style.transition = 'background-color 0.1s';
+                clockContainer.style.backgroundColor = 'rgba(255, 100, 100, 0.7)'; // Bright red flash
+
+                // Remove the flash after a short duration
+                setTimeout(() => {
+                    clockContainer.style.backgroundColor = '';
+                }, 300);
+            }
+        }
+    }
+
+    // --- TIME ALERT FUNCTIONS END HERE ---
+    
+    // Implementation of existing unchanged functions follows...
+
     function handleDemos() {
         const url = new URL(window.location.href);
         const currentDemoParam = url.searchParams.get('demo');
@@ -104,16 +208,13 @@
         else if (currentDemoParam === '3') demoUrlToUse = DEMO_URL_3;
         else return;
 
-        const demoParams = new URL(demoUrlToUse).search; // Gets the full "?k=...&p=..." string
-        // If the URL already has the correct demo parameters, do nothing to prevent a reload loop.
+        const demoParams = new URL(demoUrlToUse).search; 
         if (url.search === demoParams) return;
 
-        // Build the new URL by combining the current game's path with the demo parameters.
         const newUrl = url.pathname + demoParams;
-        window.location.href = newUrl; // Redirect to apply the parameters. The script will run again on the new page.
+        window.location.href = newUrl; 
     }
 
-    // Implementierungen der unveränderten Funktionen
     function initializeLastMoveHighlighter() { const style = document.createElement('style'); style.innerHTML = `cg-board square.last-move { background-color: rgba(255, 0, 0, 0.5) !important; }`; document.head.appendChild(style); }
     function greetOpponent(userName, greetingParam) { if (DEBUG) console.log("greetUser called with userName:", userName); if (!userName) return false; let greetingText = greetingParam; if (!greetingText) { greetingText = 'Hi ' + userName + ". When not moving pieces, I build SL5 Aura on GitHub: free offline voice control for your PC. Have fun. " + new Date().toLocaleString('de-DE', { month: 'long', year: 'numeric' }); } const inputField = document.querySelector('.mchat__say'); const chatMessages = document.querySelectorAll('.mchat__messages li'); if (!inputField || chatMessages.length > 0) return; if (inputField.value.trim() === '') { let itsFirstGame = document.querySelector('.crosstable__score').innerHTML === '<span>0</span><span>0</span>'; let remember = false; const greetedUsers = JSON.parse(localStorage.getItem(STORAGE_KEY_GREETED_USERS_LEGACY) || "{}"); const hasBeenGreeted = greetedUsers[userName] && greetedUsers[userName] > Date.now() - 31536000000; if (itsFirstGame && !hasBeenGreeted) { if (DEBUG) console.log("Sending detailed greeting to", userName); } else { greetingText = "Good luck, have fun"; if (DEBUG) console.log("Sending short greeting to", userName); } inputField.value = greetingText; remember = true; const enterKeyEvent = new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter' }); if (!window.location.href.includes("test=greet")) { inputField.dispatchEvent(enterKeyEvent); } if (DEBUG) console.log("Enter key dispatched"); if (remember) { greetedUsers[userName] = Date.now(); localStorage.setItem(STORAGE_KEY_GREETED_USERS_LEGACY, JSON.stringify(greetedUsers)); if (DEBUG) console.log("User greeted and timestamp stored in localStorage"); } } }
     function showParameterHelp() { const helpText = `--- Kürzel für URL-Parameter ---\n\nDu kannst die Figuren über die URL anpassen.\n\nDEINE FIGUREN:\n  k: König (King)\n  q: Dame (Queen)\n  r: Turm (Rook)\n  b: Läufer (Bishop)\n  n: Springer (Knight)\n\nGEGNERISCHE FIGUREN:\n  ok: Gegner-König\n  oq: Gegner-Dame\n  or: Gegner-Turm\n  ob: Gegner-Läufer\n  on: Gegner-Springer\n\nSTEUERUNG:\n  p: Aktiviert die Parameter (z.B. p=kqrnb)\n  hi: Grußnachricht\n\nBEISPIEL:\n...lichess.org/GAME_ID?n=bild_url&p=n`; alert(helpText.trim()); }
@@ -122,7 +223,32 @@
     function setPieceReplacementFlags(pieceConfig, params) { const enabledParams = params.get('p') || ''; for (const playerType in pieceConfig) { for (const pieceType in pieceConfig[playerType]) { const piece = pieceConfig[playerType][pieceType]; if (enabledParams.includes(piece.param)) { piece.enabled = true; } } } }
     function applyCustomImage(element, imageUrl) { if (!element) return; const desiredBgImage = `url("${imageUrl}")`; if (element.style.backgroundImage !== desiredBgImage) { element.style.backgroundImage = desiredBgImage; element.style.backgroundSize = 'contain'; element.style.backgroundPosition = 'center'; element.style.backgroundRepeat = 'no-repeat'; } }
     function resetCustomImage(element) { if (!element) return; if (element.style.backgroundImage) { element.style.backgroundImage = ''; } }
-    function observeBoardAndApplyChanges(pieceConfig, greetingMessage) { let hasGreeted = false; setInterval(() => { replacePieceImages(pieceConfig); if (!hasGreeted) { try { const boardWrapper = document.querySelector('.cg-wrap'); if(boardWrapper) { const playerColor = boardWrapper.classList.contains('orientation-black') ? 'black' : 'white'; const opponentNameElement = document.querySelector(`.game__meta__players .player:not(.${playerColor}) a.user-link`); if (opponentNameElement) { const opponentName = opponentNameElement.textContent.trim().split(' ')[0]; greetOpponent(opponentName, greetingMessage); hasGreeted = true; } } } catch (e) { if(DEBUG) console.error("Error trying to greet opponent:", e); hasGreeted = true; } } }, 500); }
+
+    function observeBoardAndApplyChanges(pieceConfig, greetingMessage) {
+        let hasGreeted = false;
+        setInterval(() => {
+            replacePieceImages(pieceConfig);
+            checkTimeAlerts(); // <-- CALL THE NEW TIME ALERT FUNCTION HERE
+
+            if (!hasGreeted) { 
+                try { 
+                    const boardWrapper = document.querySelector('.cg-wrap'); 
+                    if(boardWrapper) { 
+                        const playerColor = boardWrapper.classList.contains('orientation-black') ? 'black' : 'white'; 
+                        const opponentNameElement = document.querySelector(`.game__meta__players .player:not(.${playerColor}) a.user-link`); 
+                        if (opponentNameElement) { 
+                            const opponentName = opponentNameElement.textContent.trim().split(' ')[0]; 
+                            greetOpponent(opponentName, greetingMessage); 
+                            hasGreeted = true; 
+                        } 
+                    } 
+                } catch (e) { 
+                    if(DEBUG) console.error("Error trying to greet opponent:", e); 
+                    hasGreeted = true; 
+                } 
+            } 
+        }, 500); 
+    }
 
     function replacePieceImages(pieceConfig) {
         const boardWrapper = document.querySelector('.cg-wrap');
@@ -165,7 +291,5 @@
             }
         });
     }
-
-
 
 })();
