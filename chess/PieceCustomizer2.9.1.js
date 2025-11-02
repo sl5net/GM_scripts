@@ -1,4 +1,4 @@
-  // ==UserScript==
+// ==UserScript==
 // @name         Lichess Piece Customizer 2.9.1 (Features Restored & Custom Pawns)
 // @namespace    https://lichess.org/
 // @version      2.9.1
@@ -39,6 +39,7 @@
     const DEFAULT_PLAYER_QUEEN_URL = 'https://sl5.de/wp-content/uploads/2025/06/SL5-Queen-wordpress-extra-2025-0610-0623-2.svg';
     const DEFAULT_OPPONENT_QUEEN_URL = 'https://svgsilh.com/svg/1598266.svg';
     const DEFAULT_ROOK_URL = 'https://as2.ftcdn.net/v2/jpg/02/05/85/31/1000_F_205853174_6A2n536iT6H23n5j2FmhD2Q5iSjKkYpU.jpg';
+    const DEFAULT_BISHOP_URL = 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg';
     const DEFAULT_BISHOP_URL = 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg';
     const DEFAULT_KNIGHT_URL = 'https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg';
 
@@ -119,7 +120,7 @@
     function createShowParamsButton() { if (document.getElementById('show-params-help-button')) { return; } const topBarButtons = document.querySelector('#top .site-buttons'); if (topBarButtons) { const helpButton = document.createElement('button'); helpButton.id = 'show-params-help-button'; helpButton.textContent = 'Kürzel-Hilfe'; helpButton.style.cssText = 'margin-left: 12px; padding: 6px; border-radius: 4px; background: #333; color: #ccc; border: 1px solid #555; cursor: pointer;'; helpButton.addEventListener('click', showParameterHelp); topBarButtons.appendChild(helpButton); } }
     function loadAndMergeUrlParameters(currentUrlParams) { const storedParamsString = localStorage.getItem(STORAGE_KEY_URL_PARAMS); const storedParams = storedParamsString ? new URLSearchParams(storedParamsString) : new URLSearchParams(); currentUrlParams.forEach((value, key) => { if (value === '') { storedParams.delete(key); } else { storedParams.set(key, value); const pieceParamKeys = ['k', 'q', 'r', 'b', 'n', 'ok', 'oq', 'or', 'ob', 'on', 'hi']; if (pieceParamKeys.includes(key)) { let enabledParams = storedParams.get('p') || ''; if (!enabledParams.includes(key)) { storedParams.set('p', enabledParams + key); } } } }); localStorage.setItem(STORAGE_KEY_URL_PARAMS, storedParams.toString()); return storedParams; }
     function setPieceReplacementFlags(pieceConfig, params) { const enabledParams = params.get('p') || ''; for (const playerType in pieceConfig) { for (const pieceType in pieceConfig[playerType]) { const piece = pieceConfig[playerType][pieceType]; if (enabledParams.includes(piece.param)) { piece.enabled = true; } } } }
-    function applyCustomImage(element, imageUrl) { if (!element) return; const desiredBgImage = `url("${imageUrl}")`; if (element.style.backgroundImage !== desiredBgImage) { element.style.backgroundImage = desiredBgImage; element.style.backgroundSize = 'cover'; element.style.backgroundPosition = 'center'; element.style.backgroundRepeat = 'no-repeat'; } }
+    function applyCustomImage(element, imageUrl) { if (!element) return; const desiredBgImage = `url("${imageUrl}")`; if (element.style.backgroundImage !== desiredBgImage) { element.style.backgroundImage = desiredBgImage; element.style.backgroundSize = 'contain'; element.style.backgroundPosition = 'center'; element.style.backgroundRepeat = 'no-repeat'; } }
     function resetCustomImage(element) { if (!element) return; if (element.style.backgroundImage) { element.style.backgroundImage = ''; } }
     function observeBoardAndApplyChanges(pieceConfig, greetingMessage) { let hasGreeted = false; setInterval(() => { replacePieceImages(pieceConfig); if (!hasGreeted) { try { const boardWrapper = document.querySelector('.cg-wrap'); if(boardWrapper) { const playerColor = boardWrapper.classList.contains('orientation-black') ? 'black' : 'white'; const opponentNameElement = document.querySelector(`.game__meta__players .player:not(.${playerColor}) a.user-link`); if (opponentNameElement) { const opponentName = opponentNameElement.textContent.trim().split(' ')[0]; greetOpponent(opponentName, greetingMessage); hasGreeted = true; } } } catch (e) { if(DEBUG) console.error("Error trying to greet opponent:", e); hasGreeted = true; } } }, 500); }
 
