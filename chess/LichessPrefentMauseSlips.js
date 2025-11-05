@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Lichess Internal Enter for prefent Mosue slips
+// @name         Lichess Internal Enter for prefent Mause slips
 // @namespace    http://tampermonkey.net/
 // @version      1.0
 // @description  This prefents Mosue slips. Simulate Enter key press on LMB click
