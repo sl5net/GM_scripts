@@ -12,7 +12,35 @@
 (function() {
     'use strict';
 
+      // --- Exclusion Logic ---
+    function shouldScriptRun() {
+        const url = window.location.href;
+
+        // 1. Check for user profiles or streams (contains @)
+        if (url.includes('@')) {
+            console.log('LMB to Enter Script disabled: URL contains @ (Profile/User view).');
+            return false;
+        }
+
+        // 2. Check for analysis/history anchors (e.g., #0, #23, etc.)
+        // This pattern matches a hash followed immediately by one or more digits.
+        if (/(#\d+)/.test(url)) {
+             console.log('LMB to Enter Script disabled: URL contains analysis anchor (#...).');
+            return false;
+        }
+
+        return true;
+    }
+    // --- End Exclusion Logic ---
+  
     document.addEventListener('mousedown', function(event) {
+      
+      if (!shouldScriptRun()) {
+        return
+      }
+        
+        console.log('LMB to Enter Script active.');
+      
         // Check if it was a left click (button 0)
         if (event.button === 0) {
             console.log('Left click detected. Attempting to simulate internal Enter key press.');
@@ -21,7 +49,7 @@
             // event.preventDefault();
 
             // Define the delay in milliseconds
-            const delay = 50; 
+            const delay = 20; 
 
             setTimeout(() => {
                 // Create a synthetic Enter keydown event
