@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Lichess Internal Enter for prefent Mause slips
+// @name         Lichess Internal Enter for prefent Mouse slips
 // @namespace    http://tampermonkey.net/
 // @version      1.0
-// @description  This prefents Mosue slips. Simulate Enter key press on LMB click
+// @description  This prefents Mouse slips. Simulate Enter key press on LMB click
 // @description  This functionality is specifically designed to work in tandem with the "Confirm Move by Enter" setting on Lichess. By coupling the click (selecting the target square) immediately with the Enter confirmation, the user is protected from common "mouse slips" that occur when rapidly dragging and dropping pieces, thereby improving rapid play reliability.
 // @description  A small delay is included between the click detection and the Enter dispatch to mimic the real-world action delay.
 // @match        https://lichess.org/*
